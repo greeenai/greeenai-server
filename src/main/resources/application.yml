@@ -16,3 +16,13 @@ spring:
       hibernate:
         format_sql: true
         highlight_sql: true
+
+  jwt:
+    token:
+      access-token:
+        secret: ${JWT_ACCESS_TOKEN_SECRET}
+        expiration-time: 1800
+      refresh-token:
+        secret: ${JWT_REFRESH_TOKEN_SECRET}
+        expiration-time: 172800
+    issuer: ${JWT_ISSUER}
