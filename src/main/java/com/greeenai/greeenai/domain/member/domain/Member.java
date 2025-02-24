@@ -16,41 +16,41 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"oAuthId", "oAuthProvider"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})})
 public class Member extends BaseEntity {
 
-	@Id
-	private Long id;
+    @Id
+    private Long id;
 
-	private String name;
+    private String name;
 
-	private String email;
+    private String email;
 
-	private String oAuthId;
+    private String oauthId;
 
-	@Enumerated(EnumType.STRING)
-	private OAuthProvider oAuthProvider;
+    @Enumerated(EnumType.STRING)
+    private OauthProvider oauthProvider;
 
-	private LocalDateTime lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private Member(String name, String email, String oAuthId, OAuthProvider oAuthProvider) {
-		this.name = name;
-		this.email = email;
-		this.oAuthId = oAuthId;
-		this.oAuthProvider = oAuthProvider;
-	}
+    @Builder(access = AccessLevel.PRIVATE)
+    private Member(String name, String email, String oauthId, OauthProvider oauthProvider) {
+        this.name = name;
+        this.email = email;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
+    }
 
-	public static Member create(String name, String email, String oAuthId, OAuthProvider oAuthProvider) {
-		return Member.builder()
-				.name(name)
-				.email(email)
-				.oAuthId(oAuthId)
-				.oAuthProvider(oAuthProvider)
-				.build();
-	}
+    public static Member create(String name, String email, String oauthId, OauthProvider oauthProvider) {
+        return Member.builder()
+                .name(name)
+                .email(email)
+                .oauthId(oauthId)
+                .oauthProvider(oauthProvider)
+                .build();
+    }
 
-	public void updateLastLoginAt(LocalDateTime now) {
-		this.lastLoginAt = now;
-	}
+    public void updateLastLoginAt(LocalDateTime now) {
+        this.lastLoginAt = now;
+    }
 }
