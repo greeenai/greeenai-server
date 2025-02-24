@@ -27,8 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String accessToken = jwtUtil.extractTokenFromCookie(request, ACCESS_TOKEN);
-        String refreshToken = jwtUtil.extractTokenFromCookie(request, REFRESH_TOKEN);
+        String accessToken = jwtUtil.extractTokenFromHeader(request, ACCESS_TOKEN);
+        String refreshToken = jwtUtil.extractTokenFromHeader(request, REFRESH_TOKEN);
 
         try {
             Long memberId = jwtService.parseToken(ACCESS_TOKEN, accessToken);
@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             Long memberId = jwtService.parseToken(REFRESH_TOKEN, refreshToken);
             String newAccessToken = jwtService.generateToken(ACCESS_TOKEN, memberId);
-            jwtUtil.addTokenCookie(response, ACCESS_TOKEN, newAccessToken);
+            jwtUtil.addTokenToHeader(response, ACCESS_TOKEN, newAccessToken);
             setAuthenticationToContext(PrincipalDetails.from(memberId));
         }
 

@@ -34,8 +34,8 @@ public class LoginService {
 
 		// TODO : redis에 refreshToken 저장
 
-		jwtUtil.addTokenCookie(response, ACCESS_TOKEN, accessToken);
-		jwtUtil.addTokenCookie(response, REFRESH_TOKEN, refreshToken);
+		jwtUtil.addTokenToHeader(response, ACCESS_TOKEN, accessToken);
+		jwtUtil.addTokenToHeader(response, REFRESH_TOKEN, refreshToken);
 
 		member.updateLastLoginAt(LocalDateTime.now());
 		memberRepository.save(member);
