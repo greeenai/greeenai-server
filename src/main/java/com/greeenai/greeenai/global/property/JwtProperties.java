@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @AllArgsConstructor
-@ConfigurationProperties(prefix = "jwt")
+@ConfigurationProperties(prefix = "spring.jwt")
 public class JwtProperties {
 
     private final Map<String, TokenProperty> token;
