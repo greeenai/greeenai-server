@@ -1,0 +1,10 @@
+package com.greeenai.greeenai.domain.member.repository;
+
+import com.greeenai.greeenai.domain.member.domain.Member;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    Optional<Member> findByOauthId(String oauthId);
+}

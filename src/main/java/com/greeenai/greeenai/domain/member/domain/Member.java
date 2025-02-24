@@ -5,14 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})})
 public class Member extends BaseEntity {
 
     @Id
@@ -22,10 +26,31 @@ public class Member extends BaseEntity {
 
     private String email;
 
-    private String authId;
+    private String oauthId;
 
     @Enumerated(EnumType.STRING)
-    private OAuthProvider oAuthProvider;
+    private OauthProvider oauthProvider;
 
     private LocalDateTime lastLoginAt;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Member(String name, String email, String oauthId, OauthProvider oauthProvider) {
+        this.name = name;
+        this.email = email;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
+    }
+
+    public static Member create(String name, String email, String oauthId, OauthProvider oauthProvider) {
+        return Member.builder()
+                .name(name)
+                .email(email)
+                .oauthId(oauthId)
+                .oauthProvider(oauthProvider)
+                .build();
+    }
+
+    public void updateLastLoginAt(LocalDateTime now) {
+        this.lastLoginAt = now;
+    }
 }
