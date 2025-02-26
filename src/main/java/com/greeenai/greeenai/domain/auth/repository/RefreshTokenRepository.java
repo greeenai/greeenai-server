@@ -3,4 +3,7 @@ package com.greeenai.greeenai.domain.auth.repository;
 import com.greeenai.greeenai.domain.auth.domain.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
-public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {}
+public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {
+
+    void deleteByMemberId(Long memberId);
+}
