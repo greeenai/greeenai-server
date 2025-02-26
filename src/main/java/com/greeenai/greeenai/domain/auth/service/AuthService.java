@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
