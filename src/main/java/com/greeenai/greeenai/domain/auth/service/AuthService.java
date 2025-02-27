@@ -10,6 +10,7 @@ import com.greeenai.greeenai.domain.member.repository.MemberRepository;
 import com.greeenai.greeenai.global.property.JwtProperties;
 import com.greeenai.greeenai.global.security.JwtService;
 import com.greeenai.greeenai.global.util.JwtUtil;
+import com.greeenai.greeenai.global.util.MemberUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -20,9 +21,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AuthService {
 
     private final JwtUtil jwtUtil;
+    private final MemberUtil memberUtil;
     private final JwtService jwtService;
     private final JwtProperties jwtProperties;
     private final MemberRepository memberRepository;
@@ -44,6 +46,13 @@ public class LoginService {
         memberRepository.save(member);
 
         log.info("[LoginService] 로그인 성공 : memberId={}", member.getId());
+    }
+
+    @Transactional
+    public void logout() {
+        Long currentMemberId = memberUtil.getCurrentMemberId();
+
+        refreshTokenRepository.deleteByMemberId(currentMemberId);
     }
 
     private Member findOrCreate(LoginRequest request) {
