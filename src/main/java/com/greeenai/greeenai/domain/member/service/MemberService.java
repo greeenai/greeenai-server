@@ -22,6 +22,8 @@ public class MemberService {
 
         memberRepository.delete(currentMember);
 
+        // todo: 멤버의 일기들 삭제
+
         log.info("[MemberService] 회원 탈퇴 성공 : memberId={}", currentMember.getId());
     }
 }
