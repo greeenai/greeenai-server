@@ -5,7 +5,6 @@ spring:
     include:
       - mysql
       - redis
-      - oauth
       - jwt
 
   application:
