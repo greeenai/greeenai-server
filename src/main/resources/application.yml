@@ -1,34 +1,12 @@
 spring:
+  profiles:
+    group:
+      dev: "dev"
+    include:
+      - mysql
+      - redis
+      - oauth
+      - jwt
+
   application:
     name: greeenai
-
-  datasource:
-    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        highlight_sql: true
-
-  jwt:
-    token:
-      accessToken:
-        secret: ${JWT_ACCESS_TOKEN_SECRET}
-        expiration-time: 1800
-      refreshToken:
-        secret: ${JWT_REFRESH_TOKEN_SECRET}
-        expiration-time: 172800
-    issuer: ${JWT_ISSUER}
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: ${REDIS_PASSWORD}

@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: "jwt"
+  jwt:
+    token:
+      accessToken:
+        secret: ${JWT_ACCESS_TOKEN_SECRET}
+        expiration-time: 1800
+      refreshToken:
+        secret: ${JWT_REFRESH_TOKEN_SECRET}
+        expiration-time: 172800
+    issuer: ${JWT_ISSUER}
