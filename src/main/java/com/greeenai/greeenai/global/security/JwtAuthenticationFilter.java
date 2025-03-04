@@ -1,6 +1,6 @@
 package com.greeenai.greeenai.global.security;
 
-import static com.greeenai.greeenai.global.common.SecurityConstants.*;
+import static com.greeenai.greeenai.global.common.constants.SecurityConstants.*;
 
 import com.greeenai.greeenai.global.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
