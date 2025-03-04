@@ -2,6 +2,8 @@ package com.greeenai.greeenai.global.util;
 
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.domain.member.repository.MemberRepository;
+import com.greeenai.greeenai.global.error.exception.CustomException;
+import com.greeenai.greeenai.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,8 +17,8 @@ public class MemberUtil {
 
     // 현재 로그인한 Member를 조회합니다.
     public Member getCurrentMember() {
-        // todo: throw CustomException
-        return memberRepository.findById(getCurrentMemberId()).orElseThrow(() -> new IllegalArgumentException());
+        return memberRepository.findById(getCurrentMemberId())
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
     }
 
     public Long getCurrentMemberId() {
@@ -27,14 +29,13 @@ public class MemberUtil {
         try {
             return Long.parseLong(authentication.getName());
         } catch (NumberFormatException e) {
-            // todo: throw CustomException
-            throw new IllegalArgumentException();
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
     }
 
     private void validateAuthenticationNotNull(Authentication authentication) {
         if (authentication == null) {
-            // todo: throw CustomException
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
     }
 }

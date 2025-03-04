@@ -2,6 +2,8 @@ package com.greeenai.greeenai.global.security;
 
 import static com.greeenai.greeenai.global.common.constants.SecurityConstants.*;
 
+import com.greeenai.greeenai.global.error.exception.CustomException;
+import com.greeenai.greeenai.global.error.exception.ErrorCode;
 import com.greeenai.greeenai.global.property.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -56,8 +58,7 @@ public class JwtService {
 
     private void validateToken(String token) {
         if (token == null) {
-            // todo: throw custom exception
-            throw new RuntimeException("Token is null");
+            throw new CustomException(ErrorCode.TOKEN_INVALID);
         }
     }
 
