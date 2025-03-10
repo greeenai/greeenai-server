@@ -1,6 +1,6 @@
 package com.greeenai.greeenai.domain.auth.service;
 
-import static com.greeenai.greeenai.global.common.constants.SecurityConstants.*;
+import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
 
 import com.greeenai.greeenai.domain.auth.domain.RefreshToken;
 import com.greeenai.greeenai.domain.auth.repository.RefreshTokenRepository;

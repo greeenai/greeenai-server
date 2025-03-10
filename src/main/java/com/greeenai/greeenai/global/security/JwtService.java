@@ -1,6 +1,6 @@
 package com.greeenai.greeenai.global.security;
 
-import static com.greeenai.greeenai.global.common.constants.SecurityConstants.*;
+import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.TOKEN_INVALID;
 
 import com.greeenai.greeenai.global.error.exception.CustomException;

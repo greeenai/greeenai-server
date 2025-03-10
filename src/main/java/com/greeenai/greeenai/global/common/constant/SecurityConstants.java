@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.global.common.constants;
+package com.greeenai.greeenai.global.common.constant;
 
 public class SecurityConstants {
 
