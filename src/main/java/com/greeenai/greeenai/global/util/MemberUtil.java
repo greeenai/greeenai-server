@@ -1,5 +1,6 @@
 package com.greeenai.greeenai.global.util;
 
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.UNAUTHORIZED;
 
 import com.greeenai.greeenai.domain.member.domain.Member;
@@ -18,7 +19,7 @@ public class MemberUtil {
 
     // 현재 로그인한 Member를 조회합니다.
     public Member getCurrentMember() {
-        return memberRepository.findById(getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED));
+        return memberRepository.findById(getCurrentMemberId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
 
     public Long getCurrentMemberId() {

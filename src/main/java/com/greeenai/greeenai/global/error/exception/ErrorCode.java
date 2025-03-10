@@ -24,6 +24,9 @@ public enum ErrorCode {
     // Authentication
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     PERMISSION_DENIED(HttpStatus.FORBIDDEN, "권한이 거부되었습니다."),
+
+    // Member
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     ;
 
     private final HttpStatus httpStatus;
