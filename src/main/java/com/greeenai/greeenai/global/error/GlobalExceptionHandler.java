@@ -1,6 +1,5 @@
 package com.greeenai.greeenai.global.error;
 
-import com.greeenai.greeenai.global.common.response.GlobalResponse;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		final ErrorCode errorCode = ErrorCode.METHOD_ARGUMENT_INVALID;
 		final String errorMessage = String.join(ERROR_MESSAGE_DELIMITER, errorCode.getMessage(), errors.toString());
 		final ErrorResponse errorResponse = ErrorResponse.of(ex.getClass().getSimpleName(), errorMessage);
-		final GlobalResponse globalResponse = GlobalResponse.error(errorCode.getHttpStatus().value(), errorResponse);
-		return ResponseEntity.status(errorCode.getHttpStatus()).body(globalResponse);
+		return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
 	}
 
 	@Override
@@ -142,15 +140,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private ResponseEntity<Object> createErrorResponseEntity(final Exception ex, final ErrorCode errorCode) {
 		final ErrorResponse errorResponse = ErrorResponse.of(ex.getClass().getSimpleName(), errorCode.getMessage());
-		final GlobalResponse globalResponse = GlobalResponse.error(errorCode.getHttpStatus().value(), errorResponse);
-		return ResponseEntity.status(errorCode.getHttpStatus()).body(globalResponse);
+		return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
 	}
 
 	private ResponseEntity<Object> createHttpClientErrorResponseEntity(final HttpClientErrorException ex) {
-		final ErrorResponse errorResponse = ErrorResponse.of(ex.getClass().getSimpleName(),
-				ex.getResponseBodyAsString());
-		final GlobalResponse globalResponse = GlobalResponse.error(ex.getStatusCode().value(), errorResponse);
-		return ResponseEntity.status(ex.getStatusCode()).body(globalResponse);
+		final ErrorResponse errorResponse = ErrorResponse.of(ex.getClass().getSimpleName(), ex.getResponseBodyAsString());
+		return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
 	}
 }
-
