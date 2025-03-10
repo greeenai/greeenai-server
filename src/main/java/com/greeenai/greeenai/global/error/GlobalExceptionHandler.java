@@ -21,6 +21,8 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
+
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        final ErrorCode errorCode = ErrorCode.METHOD_ARGUMENT_INVALID;
+        final ErrorCode errorCode = METHOD_ARGUMENT_INVALID;
         final String errorMessage = String.join(ERROR_MESSAGE_DELIMITER, errorCode.getMessage(), errors.toString());
         final ErrorResponse errorResponse = ErrorResponse.of(ex.getClass().getSimpleName(), errorMessage);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error("HttpRequestMethodNotSupported : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.METHOD_NOT_SUPPORTED;
+        final ErrorCode errorCode = METHOD_NOT_SUPPORTED;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -57,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHandlerMethodValidationException(
             HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error("HandlerMethodValidationException : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.QUERY_PARAM_INVALID;
+        final ErrorCode errorCode = QUERY_PARAM_INVALID;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -68,7 +70,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request) {
         log.error("MissingServletRequestParameter : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.QUERY_PARAM_NOT_FOUND;
+        final ErrorCode errorCode = QUERY_PARAM_NOT_FOUND;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(
             Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
         log.error("ExceptionInternal : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        final ErrorCode errorCode = INTERNAL_SERVER_ERROR;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -84,7 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error("HttpMessageNotReadable : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.HTTP_MESSAGE_NOT_READABLE;
+        final ErrorCode errorCode = HTTP_MESSAGE_NOT_READABLE;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -98,7 +100,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         log.error("MethodArgumentTypeMismatchException : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.QUERY_TYPE_MISMATCH;
+        final ErrorCode errorCode = QUERY_TYPE_MISMATCH;
         return createErrorResponseEntity(ex, errorCode);
     }
 
@@ -111,7 +113,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
         log.error("InternalServerError : {}", ex.getMessage(), ex);
-        final ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        final ErrorCode errorCode = INTERNAL_SERVER_ERROR;
         return createErrorResponseEntity(ex, errorCode);
     }
 
