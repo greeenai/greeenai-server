@@ -163,4 +163,16 @@ class GlobalExceptionHandlerTest {
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(ex.getResponseBodyAsString(), errorResponse.message());
 	}
+
+	@Test
+	void handleException() {
+		Exception ex = new RuntimeException("Unexpected error");
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleException(ex);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(INTERNAL_SERVER_ERROR.getMessage(), errorResponse.message());
+	}
 }
