@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -109,4 +110,16 @@ class GlobalExceptionHandlerTest {
 		assertEquals(INTERNAL_SERVER_ERROR.getMessage(), errorResponse.message());
 	}
 
+	@Test
+	void handleHttpMessageNotReadable() {
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Message not readable");
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleHttpMessageNotReadable(
+				ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(HTTP_MESSAGE_NOT_READABLE.getMessage(), errorResponse.message());
+	}
 }
