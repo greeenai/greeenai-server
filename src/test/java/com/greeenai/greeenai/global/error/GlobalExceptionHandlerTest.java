@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,5 +137,17 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(errorCode.getMessage(), errorResponse.message());
+	}
+
+	@Test
+	void handleMethodArgumentTypeMismatchException() {
+		MethodArgumentTypeMismatchException ex = mock(MethodArgumentTypeMismatchException.class);
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleMethodArgumentTypeMismatchException(ex);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(QUERY_TYPE_MISMATCH.getMessage(), errorResponse.message());
 	}
 }
