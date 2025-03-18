@@ -95,4 +95,18 @@ class GlobalExceptionHandlerTest {
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(QUERY_PARAM_NOT_FOUND.getMessage(), errorResponse.message());
 	}
+
+	@Test
+	void handleExceptionInternal() {
+		Exception ex = new Exception("Internal error");
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleExceptionInternal(
+				ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(INTERNAL_SERVER_ERROR.getMessage(), errorResponse.message());
+	}
+
 }
