@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
@@ -80,5 +81,18 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(QUERY_PARAM_INVALID.getMessage(), errorResponse.message());
+	}
+
+	@Test
+	void handleMissingServletRequestParameter() {
+		MissingServletRequestParameterException ex = new MissingServletRequestParameterException("param", "String");
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleMissingServletRequestParameter(
+				ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(QUERY_PARAM_NOT_FOUND.getMessage(), errorResponse.message());
 	}
 }
