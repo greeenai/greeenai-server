@@ -1,5 +1,7 @@
 package com.greeenai.greeenai.global.error;
 
+import com.greeenai.greeenai.global.error.exception.CustomException;
+import com.greeenai.greeenai.global.error.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -121,5 +123,18 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(HTTP_MESSAGE_NOT_READABLE.getMessage(), errorResponse.message());
+	}
+
+	@Test
+	void handleCustomException() {
+		ErrorCode errorCode = INTERNAL_SERVER_ERROR;
+		CustomException ex = new CustomException(errorCode);
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleCustomException(ex);
+
+		assertEquals(errorCode.getHttpStatus(), responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(errorCode.getMessage(), errorResponse.message());
 	}
 }
