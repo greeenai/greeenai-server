@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -149,5 +150,17 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(QUERY_TYPE_MISMATCH.getMessage(), errorResponse.message());
+	}
+
+	@Test
+	void handleHttpClientErrorException() {
+		HttpClientErrorException ex = HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "Bad Request", new HttpHeaders(), null, null);
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleClientErrorException(ex);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(ex.getResponseBodyAsString(), errorResponse.message());
 	}
 }
