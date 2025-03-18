@@ -1,0 +1,56 @@
+package com.greeenai.greeenai.global.error;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.METHOD_ARGUMENT_INVALID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@ActiveProfiles({"test", "h2"})
+class GlobalExceptionHandlerTest {
+
+	@InjectMocks
+	private GlobalExceptionHandler globalExceptionHandler;
+
+	@Mock
+	private WebRequest webRequest;
+
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
+
+	@Test
+	void handleMethodArgumentNotValid() {
+		MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+		BindingResult bindingResult = mock(BindingResult.class);
+		List<FieldError> fieldErrors = new ArrayList<>();
+		fieldErrors.add(new FieldError("objectName", "field", "defaultMessage"));
+		when(ex.getBindingResult()).thenReturn(bindingResult);
+		when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleMethodArgumentNotValid(
+				ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(METHOD_ARGUMENT_INVALID.getMessage() + " {field=defaultMessage}", errorResponse.message());
+	}
+}
