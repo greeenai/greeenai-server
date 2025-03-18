@@ -14,12 +14,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.greeenai.greeenai.global.error.exception.ErrorCode.METHOD_ARGUMENT_INVALID;
-import static com.greeenai.greeenai.global.error.exception.ErrorCode.METHOD_NOT_SUPPORTED;
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,5 +67,18 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(METHOD_NOT_SUPPORTED.getMessage(), errorResponse.message());
+	}
+
+	@Test
+	void handleHandlerMethodValidationException() {
+		HandlerMethodValidationException ex = mock(HandlerMethodValidationException.class);
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleHandlerMethodValidationException(
+				ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(QUERY_PARAM_INVALID.getMessage(), errorResponse.message());
 	}
 }
