@@ -1,9 +1,9 @@
 spring:
   profiles:
     group:
-      dev: "dev"
+      dev: "dev, mysql"
+      test: "test, h2"
     include:
-      - mysql
       - redis
       - jwt
 
