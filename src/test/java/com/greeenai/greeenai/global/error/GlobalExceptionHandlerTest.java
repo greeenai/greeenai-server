@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.METHOD_ARGUMENT_INVALID;
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.METHOD_NOT_SUPPORTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,5 +54,18 @@ class GlobalExceptionHandlerTest {
 		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
 		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
 		assertEquals(METHOD_ARGUMENT_INVALID.getMessage() + " {field=defaultMessage}", errorResponse.message());
+	}
+
+	@Test
+	void handleHttpRequestMethodNotSupported() {
+		HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("POST");
+
+		ResponseEntity<Object> responseEntity = globalExceptionHandler.handleHttpRequestMethodNotSupported(
+				ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED, webRequest);
+
+		assertEquals(HttpStatus.METHOD_NOT_ALLOWED, responseEntity.getStatusCode());
+		ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+		assertEquals(ex.getClass().getSimpleName(), errorResponse.className());
+		assertEquals(METHOD_NOT_SUPPORTED.getMessage(), errorResponse.message());
 	}
 }
