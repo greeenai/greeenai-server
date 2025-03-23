@@ -1,5 +1,7 @@
 package com.greeenai.greeenai.global.error;
 
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
+
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.error.exception.ErrorCode;
 import java.util.HashMap;
@@ -20,8 +22,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice
