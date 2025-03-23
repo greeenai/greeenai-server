@@ -79,14 +79,6 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
 
-      # AWS 로그인
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: ap-northeast-2
-          output-config: true
-
       # docker-compose.yml을 EC2에 복사
       - name: Copy docker-compose file to EC2
         uses: appleboy/scp-action@master
