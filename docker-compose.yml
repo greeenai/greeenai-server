@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  backend:
+    image: ${IMAGE_FULL_URL}
+    container_name: greeenai-server
+    restart: always
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+      - DOCKER_IMAGE_TAG=${IMAGE_FULL_URL}
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul
+    network_mode: host
