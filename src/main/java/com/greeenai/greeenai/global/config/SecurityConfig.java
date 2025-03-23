@@ -18,13 +18,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/auth/login")
                 .permitAll()
                 .anyRequest()
                 .authenticated());
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
