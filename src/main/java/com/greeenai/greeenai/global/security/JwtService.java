@@ -11,7 +11,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,10 +25,10 @@ public class JwtService {
 
     @PostConstruct
     protected void init() {
-        accessTokenSecretKey = Keys.hmacShaKeyFor(
-                Base64.getDecoder().decode(getTokenProperty(ACCESS_TOKEN).secret()));
-        refreshTokenSecretKey = Keys.hmacShaKeyFor(
-                Base64.getDecoder().decode(getTokenProperty(REFRESH_TOKEN).secret()));
+        accessTokenSecretKey =
+                Keys.hmacShaKeyFor(getTokenProperty(ACCESS_TOKEN).secret().getBytes());
+        refreshTokenSecretKey =
+                Keys.hmacShaKeyFor(getTokenProperty(REFRESH_TOKEN).secret().getBytes());
     }
 
     public Long parseToken(String tokenType, String token) {
