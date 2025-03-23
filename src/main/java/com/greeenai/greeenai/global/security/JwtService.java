@@ -1,7 +1,7 @@
 package com.greeenai.greeenai.global.security;
 
 import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
-import static com.greeenai.greeenai.global.error.exception.ErrorCode.TOKEN_INVALID;
+import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.property.JwtProperties;
@@ -9,7 +9,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +19,6 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
     private final JwtProperties jwtProperties;
-    private Key accessTokenSecretKey;
-    private Key refreshTokenSecretKey;
-
-    @PostConstruct
-    protected void init() {
-        accessTokenSecretKey =
-                Keys.hmacShaKeyFor(getTokenProperty(ACCESS_TOKEN).secret().getBytes());
-        refreshTokenSecretKey =
-                Keys.hmacShaKeyFor(getTokenProperty(REFRESH_TOKEN).secret().getBytes());
-    }
 
     public Long parseToken(String tokenType, String token) {
         validateToken(token);
@@ -64,9 +53,11 @@ public class JwtService {
 
     private Key getSecretKey(String tokenType) {
         if (ACCESS_TOKEN.equals(tokenType)) {
-            return accessTokenSecretKey;
+            return Keys.hmacShaKeyFor(getTokenProperty(ACCESS_TOKEN).secret().getBytes());
+        } else if (REFRESH_TOKEN.equals(tokenType)) {
+            return Keys.hmacShaKeyFor(getTokenProperty(REFRESH_TOKEN).secret().getBytes());
         } else {
-            return refreshTokenSecretKey;
+            throw new CustomException(TOKEN_TYPE_INVALID);
         }
     }
 
