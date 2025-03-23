@@ -87,7 +87,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "docker-compose.yml"
-          target: "~"
+          target: "~/docker-compose.yml"
           overwrite: true
 
       # EC2로 배포
