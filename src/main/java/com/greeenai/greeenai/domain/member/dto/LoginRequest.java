@@ -7,4 +7,4 @@ public record LoginRequest(
         @NotBlank String name,
         @NotBlank String email,
         @NotBlank String oauthId,
-        @NotBlank OauthProvider oAuthProvider) {}
+        OauthProvider oAuthProvider) {}
