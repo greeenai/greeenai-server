@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@ActiveProfiles({"test", "h2"})
+@ActiveProfiles({"test"})
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 

@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"test", "h2"})
+@ActiveProfiles({"test"})
 @ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
 
