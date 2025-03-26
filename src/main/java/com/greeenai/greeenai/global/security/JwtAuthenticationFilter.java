@@ -2,6 +2,7 @@ package com.greeenai.greeenai.global.security;
 
 import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
 
+import com.greeenai.greeenai.global.common.constant.UrlConstants;
 import com.greeenai.greeenai.global.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         String accessToken = jwtUtil.extractTokenFromHeader(request, ACCESS_TOKEN);
         String refreshToken = jwtUtil.extractTokenFromHeader(request, REFRESH_TOKEN);
 
@@ -46,5 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthenticationToContext(UserDetails userDetails) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().equals(UrlConstants.LOGIN_URI);
     }
 }
