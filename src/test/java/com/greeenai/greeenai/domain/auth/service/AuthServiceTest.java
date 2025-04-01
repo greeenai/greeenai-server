@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -61,13 +60,6 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
-    private LoginRequest loginRequest;
-
-    @BeforeEach
-    void setUp() {
-        loginRequest = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
-    }
-
     @Nested
     @DisplayName("로그인 테스트")
     class LoginTests {
@@ -76,6 +68,7 @@ class AuthServiceTest {
         @DisplayName("기존 회원이 로그인 요청을 하면 성공한다")
         void login_existingMember() {
             // Given
+            LoginRequest loginRequest = createLoginRequest();
             Member mockMember = mock(Member.class);
 
             when(jwtProperties.getToken()).thenReturn(createTokenMap());
@@ -96,6 +89,7 @@ class AuthServiceTest {
         @DisplayName("신규 회원이 로그인 요청을 하면 회원을 생성하고 성공한다")
         void login_newMember() {
             // Given
+            LoginRequest loginRequest = createLoginRequest();
             Member testMember = Member.create(
                     loginRequest.name(), loginRequest.email(), loginRequest.oauthId(), loginRequest.oAuthProvider());
 
@@ -136,6 +130,10 @@ class AuthServiceTest {
             // Then
             verify(refreshTokenRepository).deleteByMemberId(TEST_MEMBER_ID);
         }
+    }
+
+    private LoginRequest createLoginRequest() {
+        return new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
     }
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {
