@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -67,63 +68,74 @@ class AuthServiceTest {
         loginRequest = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
     }
 
-    @Test
-    @DisplayName("기존 회원이 로그인 요청을 하면 성공한다")
-    void login_existingMember() {
-        // Given
-        Member mockMember = mock(Member.class);
+    @Nested
+    @DisplayName("로그인 테스트")
+    class LoginTests {
 
-        when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.of(mockMember));
-        when(jwtService.generateToken(eq(ACCESS_TOKEN), anyLong())).thenReturn(TEST_ACCESS_TOKEN);
-        when(jwtService.generateToken(eq(REFRESH_TOKEN), anyLong())).thenReturn(TEST_REFRESH_TOKEN);
+        @Test
+        @DisplayName("기존 회원이 로그인 요청을 하면 성공한다")
+        void login_existingMember() {
+            // Given
+            Member mockMember = mock(Member.class);
 
-        // When
-        authService.login(loginRequest, response);
+            when(jwtProperties.getToken()).thenReturn(createTokenMap());
+            when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.of(mockMember));
+            when(jwtService.generateToken(eq(ACCESS_TOKEN), anyLong())).thenReturn(TEST_ACCESS_TOKEN);
+            when(jwtService.generateToken(eq(REFRESH_TOKEN), anyLong())).thenReturn(TEST_REFRESH_TOKEN);
 
-        // Then
-        verify(mockMember).updateLastLoginAt(any(LocalDateTime.class));
-        verify(memberRepository).save(mockMember);
-        verifyTokenOperations();
+            // When
+            authService.login(loginRequest, response);
+
+            // Then
+            verify(mockMember).updateLastLoginAt(any(LocalDateTime.class));
+            verify(memberRepository).save(mockMember);
+            verifyTokenOperations();
+        }
+
+        @Test
+        @DisplayName("신규 회원이 로그인 요청을 하면 회원을 생성하고 성공한다")
+        void login_newMember() {
+            // Given
+            Member testMember = Member.create(
+                    loginRequest.name(), loginRequest.email(), loginRequest.oauthId(), loginRequest.oAuthProvider());
+
+            ReflectionTestUtils.setField(testMember, "id", TEST_MEMBER_ID);
+            when(jwtProperties.getToken()).thenReturn(createTokenMap());
+            when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.empty());
+            when(memberRepository.save(any(Member.class))).thenReturn(testMember);
+            when(jwtService.generateToken(eq(ACCESS_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_ACCESS_TOKEN);
+            when(jwtService.generateToken(eq(REFRESH_TOKEN), eq(TEST_MEMBER_ID)))
+                    .thenReturn(TEST_REFRESH_TOKEN);
+
+            ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
+
+            // When
+            authService.login(loginRequest, response);
+
+            // Then
+            verify(memberRepository, times(2)).save(memberCaptor.capture());
+            Member savedMember = memberCaptor.getValue();
+            assertThat(savedMember.getOauthId()).isEqualTo(TEST_OAUTH_ID);
+            verifyTokenOperations();
+        }
     }
 
-    @Test
-    @DisplayName("신규 회원이 로그인 요청을 하면 회원을 생성하고 성공한다")
-    void login_newMember() {
-        // Given
-        Member testMember = Member.create(
-                loginRequest.name(), loginRequest.email(), loginRequest.oauthId(), loginRequest.oAuthProvider());
+    @Nested
+    @DisplayName("로그아웃 테스트")
+    class LogoutTests {
 
-        ReflectionTestUtils.setField(testMember, "id", TEST_MEMBER_ID);
-        when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.empty());
-        when(memberRepository.save(any(Member.class))).thenReturn(testMember);
-        when(jwtService.generateToken(eq(ACCESS_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_ACCESS_TOKEN);
-        when(jwtService.generateToken(eq(REFRESH_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_REFRESH_TOKEN);
+        @Test
+        @DisplayName("로그아웃 요청을 하면 성공한다")
+        void logout() {
+            // Given
+            when(memberUtil.getCurrentMemberId()).thenReturn(TEST_MEMBER_ID);
 
-        ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
+            // When
+            authService.logout();
 
-        // When
-        authService.login(loginRequest, response);
-
-        // Then
-        verify(memberRepository, times(2)).save(memberCaptor.capture());
-        Member savedMember = memberCaptor.getValue();
-        assertThat(savedMember.getOauthId()).isEqualTo(TEST_OAUTH_ID);
-        verifyTokenOperations();
-    }
-
-    @Test
-    @DisplayName("로그아웃 요청을 하면 성공한다")
-    void logout() {
-        // Given
-        when(memberUtil.getCurrentMemberId()).thenReturn(TEST_MEMBER_ID);
-
-        // When
-        authService.logout();
-
-        // Then
-        verify(refreshTokenRepository).deleteByMemberId(TEST_MEMBER_ID);
+            // Then
+            verify(refreshTokenRepository).deleteByMemberId(TEST_MEMBER_ID);
+        }
     }
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {

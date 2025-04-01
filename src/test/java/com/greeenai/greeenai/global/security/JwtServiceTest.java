@@ -12,8 +12,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,75 +31,85 @@ class JwtServiceTest {
     @Mock
     private JwtProperties jwtProperties;
 
-    @Test
-    @DisplayName("유효한 토큰 타입으로 토큰을 생성하면 성공한다")
-    void generateToken_shouldCreateValidToken() {
-        // Given
-        when(jwtProperties.getToken()).thenReturn(createTokenMap());
+    @Nested
+    @DisplayName("토큰 생성 테스트")
+    class GenerateTokenTests {
 
-        // When
-        String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
+        @Test
+        @DisplayName("유효한 토큰 타입으로 토큰을 생성하면 성공한다")
+        void generateToken_shouldCreateValidToken() {
+            // Given
+            when(jwtProperties.getToken()).thenReturn(createTokenMap());
 
-        // Then
-        assertThat(token).isNotEmpty();
-        assertThat(Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(TEST_SECRET.getBytes()))
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody()
-                        .getSubject())
-                .isEqualTo(TEST_MEMBER_ID.toString());
+            // When
+            String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
+
+            // Then
+            assertThat(token).isNotEmpty();
+            assertThat(Jwts.parserBuilder()
+                            .setSigningKey(Keys.hmacShaKeyFor(TEST_SECRET.getBytes()))
+                            .build()
+                            .parseClaimsJws(token)
+                            .getBody()
+                            .getSubject())
+                    .isEqualTo(TEST_MEMBER_ID.toString());
+        }
+
+        @Test
+        @DisplayName("잘못된 토큰 타입으로 토큰을 생성하면 예외를 발생시킨다")
+        void generateToken_withInvalidTokenType_shouldThrowException() {
+            // Given
+            // 스터빙이 필요 없음
+
+            // When & Then
+            assertThatThrownBy(() -> jwtService.generateToken("INVALID_TOKEN_TYPE", 1L))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(TOKEN_TYPE_INVALID.getMessage());
+        }
     }
 
-    @Test
-    @DisplayName("유효한 토큰을 파싱하면 회원 ID를 반환한다")
-    void parseToken_shouldReturnMemberId() {
-        // Given
-        when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
+    @Nested
+    @DisplayName("토큰 파싱 테스트")
+    class ParseTokenTests {
 
-        // When
-        Long parsedMemberId = jwtService.parseToken(ACCESS_TOKEN, token);
+        @Test
+        @DisplayName("유효한 토큰을 파싱하면 회원 ID를 반환한다")
+        void parseToken_shouldReturnMemberId() {
+            // Given
+            when(jwtProperties.getToken()).thenReturn(createTokenMap());
+            String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
 
-        // Then
-        assertThat(parsedMemberId).isEqualTo(TEST_MEMBER_ID);
-    }
+            // When
+            Long parsedMemberId = jwtService.parseToken(ACCESS_TOKEN, token);
 
-    @Test
-    @DisplayName("null 토큰을 파싱하면 예외를 발생시킨다")
-    void parseToken_withNullToken_shouldThrowException() {
-        // Given
-        // 스터빙이 필요 없음
+            // Then
+            assertThat(parsedMemberId).isEqualTo(TEST_MEMBER_ID);
+        }
 
-        // When & Then
-        assertThatThrownBy(() -> jwtService.parseToken(ACCESS_TOKEN, null))
-                .isInstanceOf(CustomException.class)
-                .hasMessageContaining(TOKEN_INVALID.getMessage());
-    }
+        @Test
+        @DisplayName("null 토큰을 파싱하면 예외를 발생시킨다")
+        void parseToken_withNullToken_shouldThrowException() {
+            // Given
+            // 스터빙이 필요 없음
 
-    @Test
-    @DisplayName("잘못된 토큰 타입으로 토큰을 생성하면 예외를 발생시킨다")
-    void generateToken_withInvalidTokenType_shouldThrowException() {
-        // Given
-        // 스터빙이 필요 없음
+            // When & Then
+            assertThatThrownBy(() -> jwtService.parseToken(ACCESS_TOKEN, null))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(TOKEN_INVALID.getMessage());
+        }
 
-        // When & Then
-        assertThatThrownBy(() -> jwtService.generateToken("INVALID_TOKEN_TYPE", 1L))
-                .isInstanceOf(CustomException.class)
-                .hasMessageContaining(TOKEN_TYPE_INVALID.getMessage());
-    }
+        @Test
+        @DisplayName("잘못된 토큰 타입으로 토큰을 파싱하면 예외를 발생시킨다")
+        void parseToken_withInvalidTokenType_shouldThrowException() {
+            // Given
+            when(jwtProperties.getToken()).thenReturn(createTokenMap());
+            String token = jwtService.generateToken(ACCESS_TOKEN, 1L);
 
-    @Test
-    @DisplayName("잘못된 토큰 타입으로 토큰을 파싱하면 예외를 발생시킨다")
-    void parseToken_withInvalidTokenType_shouldThrowException() {
-        // Given
-        when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        String token = jwtService.generateToken(ACCESS_TOKEN, 1L);
-
-        // When & Then
-        assertThatThrownBy(() -> jwtService.parseToken("INVALID_TOKEN_TYPE", token))
-                .isInstanceOf(CustomException.class)
-                .hasMessageContaining(TOKEN_TYPE_INVALID.getMessage());
+            // When & Then
+            assertThatThrownBy(() -> jwtService.parseToken("INVALID_TOKEN_TYPE", token))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(TOKEN_TYPE_INVALID.getMessage());
+        }
     }
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {
