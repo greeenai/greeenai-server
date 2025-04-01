@@ -1,6 +1,7 @@
 package com.greeenai.greeenai.domain.auth.service;
 
 import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
+import static com.greeenai.greeenai.global.common.constant.TestConstants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -60,16 +61,10 @@ class AuthServiceTest {
     private AuthService authService;
 
     private LoginRequest loginRequest;
-    private final String testOauthId = "testOauthId";
-    private final Long testMemberId = 1L;
-    private final String testAccessToken = "testAccessToken";
-    private final String testRefreshToken = "testRefreshToken";
-    private final String testSecret = "testSecret";
-    private final long testExpirationTime = 3600L;
 
     @BeforeEach
     void setUp() {
-        loginRequest = new LoginRequest("Test User", "test@email.com", testOauthId, OauthProvider.APPLE);
+        loginRequest = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
     }
 
     @Test
@@ -79,9 +74,9 @@ class AuthServiceTest {
         Member mockMember = mock(Member.class);
 
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        when(memberRepository.findByOauthId(testOauthId)).thenReturn(Optional.of(mockMember));
-        when(jwtService.generateToken(eq(ACCESS_TOKEN), anyLong())).thenReturn(testAccessToken);
-        when(jwtService.generateToken(eq(REFRESH_TOKEN), anyLong())).thenReturn(testRefreshToken);
+        when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.of(mockMember));
+        when(jwtService.generateToken(eq(ACCESS_TOKEN), anyLong())).thenReturn(TEST_ACCESS_TOKEN);
+        when(jwtService.generateToken(eq(REFRESH_TOKEN), anyLong())).thenReturn(TEST_REFRESH_TOKEN);
 
         // When
         authService.login(loginRequest, response);
@@ -99,12 +94,12 @@ class AuthServiceTest {
         Member testMember = Member.create(
                 loginRequest.name(), loginRequest.email(), loginRequest.oauthId(), loginRequest.oAuthProvider());
 
-        ReflectionTestUtils.setField(testMember, "id", testMemberId);
+        ReflectionTestUtils.setField(testMember, "id", TEST_MEMBER_ID);
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        when(memberRepository.findByOauthId(testOauthId)).thenReturn(Optional.empty());
+        when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
-        when(jwtService.generateToken(eq(ACCESS_TOKEN), eq(testMemberId))).thenReturn(testAccessToken);
-        when(jwtService.generateToken(eq(REFRESH_TOKEN), eq(testMemberId))).thenReturn(testRefreshToken);
+        when(jwtService.generateToken(eq(ACCESS_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_ACCESS_TOKEN);
+        when(jwtService.generateToken(eq(REFRESH_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_REFRESH_TOKEN);
 
         ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
 
@@ -114,7 +109,7 @@ class AuthServiceTest {
         // Then
         verify(memberRepository, times(2)).save(memberCaptor.capture());
         Member savedMember = memberCaptor.getValue();
-        assertThat(savedMember.getOauthId()).isEqualTo(testOauthId);
+        assertThat(savedMember.getOauthId()).isEqualTo(TEST_OAUTH_ID);
         verifyTokenOperations();
     }
 
@@ -122,19 +117,19 @@ class AuthServiceTest {
     @DisplayName("로그아웃 요청을 하면 성공한다")
     void logout() {
         // Given
-        when(memberUtil.getCurrentMemberId()).thenReturn(testMemberId);
+        when(memberUtil.getCurrentMemberId()).thenReturn(TEST_MEMBER_ID);
 
         // When
         authService.logout();
 
         // Then
-        verify(refreshTokenRepository).deleteByMemberId(testMemberId);
+        verify(refreshTokenRepository).deleteByMemberId(TEST_MEMBER_ID);
     }
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {
         Map<String, JwtProperties.TokenProperty> tokenMap = new HashMap<>();
-        tokenMap.put(ACCESS_TOKEN, new JwtProperties.TokenProperty(testSecret, testExpirationTime));
-        tokenMap.put(REFRESH_TOKEN, new JwtProperties.TokenProperty(testSecret, testExpirationTime * 24));
+        tokenMap.put(ACCESS_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME));
+        tokenMap.put(REFRESH_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME * 24));
         return tokenMap;
     }
 
@@ -143,10 +138,10 @@ class AuthServiceTest {
         ArgumentCaptor<RefreshToken> tokenCaptor = ArgumentCaptor.forClass(RefreshToken.class);
         verify(refreshTokenRepository).save(tokenCaptor.capture());
         RefreshToken savedToken = tokenCaptor.getValue();
-        assertThat(savedToken.getValue()).isEqualTo(testRefreshToken);
+        assertThat(savedToken.getValue()).isEqualTo(TEST_REFRESH_TOKEN);
 
         // 헤더 추가 검증
-        verify(jwtUtil).addTokenToHeader(response, ACCESS_TOKEN, testAccessToken);
-        verify(jwtUtil).addTokenToHeader(response, REFRESH_TOKEN, testRefreshToken);
+        verify(jwtUtil).addTokenToHeader(response, ACCESS_TOKEN, TEST_ACCESS_TOKEN);
+        verify(jwtUtil).addTokenToHeader(response, REFRESH_TOKEN, TEST_REFRESH_TOKEN);
     }
 }

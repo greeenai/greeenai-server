@@ -1,6 +1,7 @@
 package com.greeenai.greeenai.global.security;
 
 import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
+import static com.greeenai.greeenai.global.common.constant.TestConstants.*;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,15 +31,6 @@ class JwtServiceTest {
     @Mock
     private JwtProperties jwtProperties;
 
-    private final Long testMemberId = 1L;
-    private final String testSecret = "testSecretKeyWithAtLeast32Characters";
-    private final long testExpirationTime = 3600L;
-
-    @BeforeEach
-    void setUp() {
-        //		when(jwtProperties.getToken()).thenReturn(createTokenMap());
-    }
-
     @Test
     @DisplayName("유효한 토큰 타입으로 토큰을 생성하면 성공한다")
     void generateToken_shouldCreateValidToken() {
@@ -46,17 +38,17 @@ class JwtServiceTest {
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
 
         // When
-        String token = jwtService.generateToken(ACCESS_TOKEN, testMemberId);
+        String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
 
         // Then
         assertThat(token).isNotEmpty();
         assertThat(Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(testSecret.getBytes()))
+                        .setSigningKey(Keys.hmacShaKeyFor(TEST_SECRET.getBytes()))
                         .build()
                         .parseClaimsJws(token)
                         .getBody()
                         .getSubject())
-                .isEqualTo(testMemberId.toString());
+                .isEqualTo(TEST_MEMBER_ID.toString());
     }
 
     @Test
@@ -64,13 +56,13 @@ class JwtServiceTest {
     void parseToken_shouldReturnMemberId() {
         // Given
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
-        String token = jwtService.generateToken(ACCESS_TOKEN, testMemberId);
+        String token = jwtService.generateToken(ACCESS_TOKEN, TEST_MEMBER_ID);
 
         // When
         Long parsedMemberId = jwtService.parseToken(ACCESS_TOKEN, token);
 
         // Then
-        assertThat(parsedMemberId).isEqualTo(testMemberId);
+        assertThat(parsedMemberId).isEqualTo(TEST_MEMBER_ID);
     }
 
     @Test
@@ -112,8 +104,8 @@ class JwtServiceTest {
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {
         Map<String, JwtProperties.TokenProperty> tokenMap = new HashMap<>();
-        tokenMap.put(ACCESS_TOKEN, new JwtProperties.TokenProperty(testSecret, testExpirationTime));
-        tokenMap.put(REFRESH_TOKEN, new JwtProperties.TokenProperty(testSecret, testExpirationTime * 24));
+        tokenMap.put(ACCESS_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME));
+        tokenMap.put(REFRESH_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME * 24));
         return tokenMap;
     }
 }

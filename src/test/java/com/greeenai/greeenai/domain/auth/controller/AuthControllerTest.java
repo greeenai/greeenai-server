@@ -1,5 +1,6 @@
 package com.greeenai.greeenai.domain.auth.controller;
 
+import static com.greeenai.greeenai.global.common.constant.TestConstants.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +46,7 @@ class AuthControllerTest {
     @DisplayName("유효한 로그인 요청을 하면 200 OK를 반환한다")
     void login_shouldReturnOk() throws Exception {
         // Given
-        LoginRequest request = new LoginRequest("Test User", "test@email.com", "testOauthId", OauthProvider.APPLE);
+        LoginRequest request = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
 
         // When & Then
         mockMvc.perform(post("/auth/login")
