@@ -49,7 +49,7 @@ public class JwtService {
     }
 
     private void validateTokenType(String tokenType) {
-        if (!ACCESS_TOKEN.equals(tokenType) && !REFRESH_TOKEN.equals(tokenType)) {
+        if (TOKEN_TYPES.stream().noneMatch(tokenType::equals)) {
             throw new CustomException(TOKEN_TYPE_INVALID);
         }
     }
