@@ -40,7 +40,7 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("토큰 생성 성공")
+    @DisplayName("유효한 토큰 타입으로 토큰을 생성하면 성공한다")
     void generateToken_shouldCreateValidToken() {
         // Given
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
@@ -60,7 +60,7 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("토큰 파싱 성공")
+    @DisplayName("유효한 토큰을 파싱하면 회원 ID를 반환한다")
     void parseToken_shouldReturnMemberId() {
         // Given
         when(jwtProperties.getToken()).thenReturn(createTokenMap());
@@ -74,7 +74,7 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("null 토큰 파싱 시 예외 발생")
+    @DisplayName("null 토큰을 파싱하면 예외를 발생시킨다")
     void parseToken_withNullToken_shouldThrowException() {
         // Given
         // 스터빙이 필요 없음
@@ -86,7 +86,7 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("잘못된 토큰 타입으로 토큰 생성 시 예외 발생")
+    @DisplayName("잘못된 토큰 타입으로 토큰을 생성하면 예외를 발생시킨다")
     void generateToken_withInvalidTokenType_shouldThrowException() {
         // Given
         // 스터빙이 필요 없음
@@ -98,7 +98,7 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("잘못된 토큰 타입으로 토큰 파싱 시 예외 발생")
+    @DisplayName("잘못된 토큰 타입으로 토큰을 파싱하면 예외를 발생시킨다")
     void parseToken_withInvalidTokenType_shouldThrowException() {
         // Given
         when(jwtProperties.getToken()).thenReturn(createTokenMap());

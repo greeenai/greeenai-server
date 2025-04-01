@@ -42,7 +42,7 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("로그인 성공")
+    @DisplayName("유효한 로그인 요청을 하면 200 OK를 반환한다")
     void login_shouldReturnOk() throws Exception {
         // Given
         LoginRequest request = new LoginRequest("Test User", "test@email.com", "testOauthId", OauthProvider.APPLE);
@@ -57,7 +57,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 요청 시 유효성 검사 실패")
+    @DisplayName("유효하지 않은 로그인 요청을 하면 400 Bad Request를 반환한다")
     void login_shouldReturnBadRequest_whenValidationFails() throws Exception {
         // Given
         LoginRequest request = new LoginRequest("", "", "", null);
@@ -72,7 +72,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그아웃 성공")
+    @DisplayName("로그아웃 요청을 하면 200 OK를 반환한다")
     void logout_shouldReturnOk() throws Exception {
         // When & Then
         mockMvc.perform(post("/auth/logout")).andExpect(status().isOk());

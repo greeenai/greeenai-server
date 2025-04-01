@@ -73,7 +73,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 성공 - 기존 회원 조회")
+    @DisplayName("기존 회원이 로그인 요청을 하면 성공한다")
     void login_existingMember() {
         // Given
         Member mockMember = mock(Member.class);
@@ -93,7 +93,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 성공 - 신규 회원 생성")
+    @DisplayName("신규 회원이 로그인 요청을 하면 회원을 생성하고 성공한다")
     void login_newMember() {
         // Given
         Member testMember = Member.create(
@@ -119,7 +119,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("로그아웃 성공")
+    @DisplayName("로그아웃 요청을 하면 성공한다")
     void logout() {
         // Given
         when(memberUtil.getCurrentMemberId()).thenReturn(testMemberId);
