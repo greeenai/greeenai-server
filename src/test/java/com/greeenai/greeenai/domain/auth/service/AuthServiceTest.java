@@ -109,6 +109,9 @@ class AuthServiceTest {
             // Then
             verify(memberRepository, times(2)).save(memberCaptor.capture());
             Member savedMember = memberCaptor.getValue();
+            assertThat(savedMember.getId()).isEqualTo(TEST_MEMBER_ID);
+            assertThat(savedMember.getName()).isEqualTo(TEST_NAME);
+            assertThat(savedMember.getEmail()).isEqualTo(TEST_EMAIL);
             assertThat(savedMember.getOauthId()).isEqualTo(TEST_OAUTH_ID);
             verifyTokenOperations();
         }
@@ -119,10 +122,13 @@ class AuthServiceTest {
     class LogoutTests {
 
         @Test
-        @DisplayName("로그아웃 요청을 하면 성공한다")
+        @DisplayName("로그아웃 요청을 하면 저장된 토큰을 삭제한다")
         void logout() {
             // Given
             when(memberUtil.getCurrentMemberId()).thenReturn(TEST_MEMBER_ID);
+
+            RefreshToken refreshToken = RefreshToken.create(TEST_MEMBER_ID, TEST_REFRESH_TOKEN, TEST_EXPIRATION_TIME);
+            refreshTokenRepository.save(refreshToken);
 
             // When
             authService.logout();
