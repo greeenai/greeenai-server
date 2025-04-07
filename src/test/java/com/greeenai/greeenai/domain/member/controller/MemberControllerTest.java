@@ -43,8 +43,6 @@ class MemberControllerTest {
         @Test
         @DisplayName("회원 탈퇴 요청을 하면 200 OK를 반환한다")
         void withdrawMember_shouldReturnOk() throws Exception {
-            // Given
-
             // When & Then
             mockMvc.perform(delete("/members/me").contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
