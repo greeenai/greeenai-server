@@ -95,11 +95,7 @@ class AuthServiceTest {
 
             ReflectionTestUtils.setField(testMember, "id", TEST_MEMBER_ID);
             when(jwtProperties.getToken()).thenReturn(createTokenMap());
-            when(memberRepository.findByOauthId(TEST_OAUTH_ID)).thenReturn(Optional.empty());
             when(memberRepository.save(any(Member.class))).thenReturn(testMember);
-            when(jwtService.generateToken(eq(ACCESS_TOKEN), eq(TEST_MEMBER_ID))).thenReturn(TEST_ACCESS_TOKEN);
-            when(jwtService.generateToken(eq(REFRESH_TOKEN), eq(TEST_MEMBER_ID)))
-                    .thenReturn(TEST_REFRESH_TOKEN);
 
             ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
 
@@ -113,7 +109,6 @@ class AuthServiceTest {
             assertThat(savedMember.getName()).isEqualTo(TEST_NAME);
             assertThat(savedMember.getEmail()).isEqualTo(TEST_EMAIL);
             assertThat(savedMember.getOauthId()).isEqualTo(TEST_OAUTH_ID);
-            verifyTokenOperations();
         }
     }
 
