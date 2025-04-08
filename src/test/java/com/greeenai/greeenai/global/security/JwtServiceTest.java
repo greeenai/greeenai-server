@@ -89,9 +89,6 @@ class JwtServiceTest {
         @Test
         @DisplayName("null 토큰을 파싱하면 예외를 발생시킨다")
         void parseToken_withNullToken_shouldThrowException() {
-            // Given
-            // 스터빙이 필요 없음
-
             // When & Then
             assertThatThrownBy(() -> jwtService.parseToken(ACCESS_TOKEN, null))
                     .isInstanceOf(CustomException.class)
