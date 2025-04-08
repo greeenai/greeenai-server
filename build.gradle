@@ -25,21 +25,32 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // AWS SDK v2 (S3)
     implementation platform('software.amazon.awssdk:bom:2.21.32')
     implementation 'software.amazon.awssdk:s3'
+
+    // Environment Variable Loader
     implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    testRuntimeOnly 'com.h2database:h2'
+
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mockito:mockito-core:5.12.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testRuntimeOnly 'com.h2database:h2'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
