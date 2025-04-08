@@ -134,7 +134,7 @@ class AuthServiceTest {
     }
 
     private LoginRequest createLoginRequest() {
-        return new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
+        return new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, TEST_OAUTH_PROVIDER);
     }
 
     private Map<String, JwtProperties.TokenProperty> createTokenMap() {
