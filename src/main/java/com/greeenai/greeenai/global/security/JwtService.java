@@ -21,6 +21,7 @@ public class JwtService {
     private final JwtProperties jwtProperties;
 
     public Long parseToken(String tokenType, String token) {
+        validateTokenType(tokenType);
         validateToken(token);
 
         Jws<Claims> claims = Jwts.parserBuilder()
@@ -29,10 +30,12 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token);
 
-        return claims.getBody().get("memberId", Long.class);
+        return Long.parseLong(claims.getBody().getSubject());
     }
 
     public String generateToken(String tokenType, Long memberId) {
+        validateTokenType(tokenType);
+
         Date now = new Date();
         Date expirationDate =
                 new Date(now.getTime() + getTokenProperty(tokenType).expirationMilliTime());
@@ -43,6 +46,12 @@ public class JwtService {
                 .setExpiration(expirationDate)
                 .signWith(getSecretKey(tokenType))
                 .compact();
+    }
+
+    private void validateTokenType(String tokenType) {
+        if (TOKEN_TYPES.stream().noneMatch(tokenType::equals)) {
+            throw new CustomException(TOKEN_TYPE_INVALID);
+        }
     }
 
     private void validateToken(String token) {

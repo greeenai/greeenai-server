@@ -29,7 +29,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-@ActiveProfiles({"test", "h2"})
+@ActiveProfiles({"test"})
 class GlobalExceptionHandlerTest {
 
     @InjectMocks
