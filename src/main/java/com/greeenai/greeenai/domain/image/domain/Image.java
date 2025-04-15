@@ -24,22 +24,26 @@ public class Image extends BaseEntity {
     private String imageKey;
 
     @Enumerated(EnumType.STRING)
-    private FileExtension fileExtension;
+    private ContentType contentType;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Image(ImageType imageType, Long targetId, String imageKey, FileExtension fileExtension) {
+    private Image(ImageType imageType, Long targetId, String imageKey, ContentType contentType) {
         this.imageType = imageType;
         this.targetId = targetId;
         this.imageKey = imageKey;
-        this.fileExtension = fileExtension;
+        this.contentType = contentType;
     }
 
-    public static Image create(ImageType imageType, Long targetId, String imageKey, FileExtension fileExtension) {
+    public static Image create(ImageType imageType, Long targetId, String imageKey, ContentType contentType) {
         return Image.builder()
                 .imageType(imageType)
                 .targetId(targetId)
                 .imageKey(imageKey)
-                .fileExtension(fileExtension)
+                .contentType(contentType)
                 .build();
+    }
+
+    public String generateFileName() {
+        return imageType.getValue() + "/" + targetId + "/" + imageKey + "." + contentType.getExtension();
     }
 }
