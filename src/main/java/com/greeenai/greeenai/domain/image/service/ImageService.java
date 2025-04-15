@@ -9,6 +9,7 @@ import com.greeenai.greeenai.domain.image.repository.ImageRepository;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.property.S3Properties;
 import java.io.IOException;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -17,8 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 @Slf4j
 @Service
@@ -27,6 +31,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 public class ImageService {
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
     private final ImageRepository imageRepository;
     private final S3Properties s3Properties;
 
@@ -51,6 +56,22 @@ public class ImageService {
             imageRepository.delete(savedImage);
             throw new FileUploadException("S3 파일 업로드 실패", e);
         }
+    }
+
+    public String generateImageDownloadUrl(Long imageId) {
+        Image image = imageRepository.findById(imageId).orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(s3Properties.getS3().bucket())
+                .key(image.generateFileName())
+                .build();
+
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+        return s3Presigner.presignGetObject(presignRequest).url().toString();
     }
 
     private PutObjectRequest getPutObjectRequest(Image image) {
