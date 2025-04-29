@@ -28,10 +28,10 @@ public class Answer extends BaseEntity {
 		this.question = question;
 	}
 
-	public static Answer create(String content, Question questio) {
+	public static Answer create(String content, Question question) {
 		return Answer.builder()
 				.content(content)
-				.question(questio)
+				.question(question)
 				.build();
 	}
 }
