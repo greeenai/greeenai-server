@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     // Diary
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일기입니다."),
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
     ;
 
     private final HttpStatus httpStatus;
