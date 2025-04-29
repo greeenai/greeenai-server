@@ -1,15 +1,13 @@
 package com.greeenai.greeenai.domain.member.domain;
 
 import com.greeenai.greeenai.domain.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import com.greeenai.greeenai.domain.diary.domain.Diary;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +31,9 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OauthProvider oauthProvider;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Diary> diaries = new ArrayList<>();
 
     private LocalDateTime lastLoginAt;
 
