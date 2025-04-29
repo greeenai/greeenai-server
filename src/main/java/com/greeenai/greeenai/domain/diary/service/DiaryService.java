@@ -1,6 +1,7 @@
 package com.greeenai.greeenai.domain.diary.service;
 
 import com.greeenai.greeenai.domain.diary.domain.Diary;
+import com.greeenai.greeenai.domain.diary.dto.DiaryCreateRequest;
 import com.greeenai.greeenai.domain.diary.dto.DiaryResponse;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.member.domain.Member;
@@ -37,6 +38,15 @@ public class DiaryService {
 		return DiaryResponse.from(diary);
 	}
 
+	@Transactional
+	public DiaryResponse createDiary(DiaryCreateRequest request) {
+		Member currentMember = memberUtil.getCurrentMember();
+		Diary diary = Diary.create(null, request.entryDate(), currentMember);
+		diaryRepository.save(diary);
+		return DiaryResponse.from(diary);
+	}
+
+	@Transactional
 	public void deleteDiaryById(Long id) {
 		diaryRepository.deleteById(id);
 	}
