@@ -1,10 +1,8 @@
 package com.greeenai.greeenai.domain.diary.domain;
 
 import com.greeenai.greeenai.domain.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.greeenai.greeenai.domain.member.domain.Member;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,14 +19,20 @@ public class Diary extends BaseEntity {
 
 	private String content;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
 	@Builder(access = AccessLevel.PRIVATE)
-	private Diary(String content) {
+	private Diary(String content, Member member) {
 		this.content = content;
+		this.member = member;
 	}
 
-	public static Diary create(String content) {
+	public static Diary create(String content, Member member) {
 		return Diary.builder()
 				.content(content)
+				.member(member)
 				.build();
 	}
 }
