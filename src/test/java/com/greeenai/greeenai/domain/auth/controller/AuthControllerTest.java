@@ -51,7 +51,7 @@ class AuthControllerTest {
         @DisplayName("유효한 로그인 요청을 하면 200 OK를 반환한다")
         void login_shouldReturnOk() throws Exception {
             // Given
-            LoginRequest request = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
+            LoginRequest request = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, TEST_OAUTH_PROVIDER);
 
             // When & Then
             mockMvc.perform(post("/auth/login")
