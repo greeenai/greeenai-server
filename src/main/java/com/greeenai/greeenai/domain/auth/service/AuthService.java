@@ -5,7 +5,7 @@ import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
 import com.greeenai.greeenai.domain.auth.domain.RefreshToken;
 import com.greeenai.greeenai.domain.auth.repository.RefreshTokenRepository;
 import com.greeenai.greeenai.domain.member.domain.Member;
-import com.greeenai.greeenai.domain.member.dto.LoginRequest;
+import com.greeenai.greeenai.domain.member.dto.request.LoginRequest;
 import com.greeenai.greeenai.domain.member.repository.MemberRepository;
 import com.greeenai.greeenai.global.property.JwtProperties;
 import com.greeenai.greeenai.global.security.JwtService;

@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.domain.diary.dto;
+package com.greeenai.greeenai.domain.diary.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

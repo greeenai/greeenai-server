@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.domain.diary.dto;
+package com.greeenai.greeenai.domain.diary.dto.response;
 
 import com.greeenai.greeenai.domain.diary.domain.Answer;
 

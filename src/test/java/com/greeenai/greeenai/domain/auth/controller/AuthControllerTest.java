@@ -7,8 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greeenai.greeenai.domain.auth.service.AuthService;
-import com.greeenai.greeenai.domain.member.domain.OauthProvider;
-import com.greeenai.greeenai.domain.member.dto.LoginRequest;
+import com.greeenai.greeenai.domain.member.dto.request.LoginRequest;
 import com.greeenai.greeenai.global.config.SecurityConfig;
 import com.greeenai.greeenai.global.security.JwtService;
 import com.greeenai.greeenai.global.util.JwtUtil;
