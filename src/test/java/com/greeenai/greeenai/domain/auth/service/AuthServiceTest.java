@@ -9,7 +9,6 @@ import static org.mockito.Mockito.*;
 import com.greeenai.greeenai.domain.auth.domain.RefreshToken;
 import com.greeenai.greeenai.domain.auth.repository.RefreshTokenRepository;
 import com.greeenai.greeenai.domain.member.domain.Member;
-import com.greeenai.greeenai.domain.member.domain.OauthProvider;
 import com.greeenai.greeenai.domain.member.dto.LoginRequest;
 import com.greeenai.greeenai.domain.member.repository.MemberRepository;
 import com.greeenai.greeenai.global.property.JwtProperties;
