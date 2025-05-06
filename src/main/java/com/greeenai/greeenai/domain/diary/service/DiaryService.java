@@ -46,9 +46,9 @@ public class DiaryService {
 
     @Transactional
     public DiaryWithQuestionsResponse createDiary(DiaryCreateRequest request) {
-        log.info("createDiary 시작 - entryDate: {}", request.entryDate());
+        log.info("createDiary 시작 - entryDate: {}", request.getEntryDate());
         Member currentMember = memberUtil.getCurrentMember();
-        Diary diary = Diary.create(null, request.entryDate(), currentMember);
+        Diary diary = Diary.create(null, request.getEntryDate(), currentMember);
         diaryRepository.save(diary);
         // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
         log.info("createDiary 완료 - diaryId: {}", diary.getId());

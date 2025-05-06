@@ -20,7 +20,7 @@ public class DiaryController {
     private final DiaryService diaryService;
 
     @PostMapping
-    public ResponseEntity<DiaryWithQuestionsResponse> createDiary(@Valid @RequestBody DiaryCreateRequest request) {
+    public ResponseEntity<DiaryWithQuestionsResponse> createDiary(@Valid @ModelAttribute DiaryCreateRequest request) {
         DiaryWithQuestionsResponse response = diaryService.createDiary(request);
         return ResponseEntity.ok(response);
     }
