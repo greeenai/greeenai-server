@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greeenai.greeenai.domain.auth.service.AuthService;
-import com.greeenai.greeenai.domain.member.domain.OauthProvider;
 import com.greeenai.greeenai.domain.member.dto.LoginRequest;
 import com.greeenai.greeenai.global.config.SecurityConfig;
 import com.greeenai.greeenai.global.security.JwtService;
@@ -51,7 +50,7 @@ class AuthControllerTest {
         @DisplayName("유효한 로그인 요청을 하면 200 OK를 반환한다")
         void login_shouldReturnOk() throws Exception {
             // Given
-            LoginRequest request = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, OauthProvider.APPLE);
+            LoginRequest request = new LoginRequest(TEST_NAME, TEST_EMAIL, TEST_OAUTH_ID, TEST_OAUTH_PROVIDER);
 
             // When & Then
             mockMvc.perform(post("/auth/login")
