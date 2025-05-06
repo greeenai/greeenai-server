@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.domain.member.dto;
+package com.greeenai.greeenai.domain.member.dto.request;
 
 import com.greeenai.greeenai.domain.member.domain.OauthProvider;
 import jakarta.validation.constraints.NotBlank;

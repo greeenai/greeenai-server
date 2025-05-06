@@ -1,7 +1,7 @@
 package com.greeenai.greeenai.domain.auth.controller;
 
 import com.greeenai.greeenai.domain.auth.service.AuthService;
-import com.greeenai.greeenai.domain.member.dto.LoginRequest;
+import com.greeenai.greeenai.domain.member.dto.request.LoginRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

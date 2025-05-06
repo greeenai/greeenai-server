@@ -1,0 +1,49 @@
+package com.greeenai.greeenai.domain.diary.domain;
+
+import com.greeenai.greeenai.domain.common.BaseEntity;
+import com.greeenai.greeenai.domain.member.domain.Member;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Diary extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String content;
+
+    @Column(nullable = false)
+    private LocalDate entryDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions = new ArrayList<>();
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Diary(String content, LocalDate entryDate, Member member) {
+        this.content = content;
+        this.entryDate = entryDate;
+        this.member = member;
+    }
+
+    public static Diary create(String content, LocalDate entryDate, Member member) {
+        return Diary.builder()
+                .content(content)
+                .entryDate(entryDate)
+                .member(member)
+                .build();
+    }
+}
