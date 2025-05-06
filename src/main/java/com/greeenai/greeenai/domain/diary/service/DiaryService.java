@@ -38,6 +38,12 @@ public class DiaryService {
         return DiaryResponse.from(diary);
     }
 
+    @Transactional(readOnly = true)
+    public String findDiaryDownloadUrlById(Long diaryId) {
+        Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        return diary.getImage().getUrl();
+    }
+
     @Transactional
     public DiaryWithQuestionsResponse createDiary(DiaryCreateRequest request) {
         log.info("createDiary 시작 - entryDate: {}", request.entryDate());
