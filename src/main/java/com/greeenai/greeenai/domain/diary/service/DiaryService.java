@@ -34,8 +34,8 @@ public class DiaryService {
 	private final MemberUtil memberUtil;
 
 	@Transactional(readOnly = true)
-	public DiaryResponse findDiaryById(Long id) {
-		Diary diary = diaryRepository.findById(id)
+	public DiaryResponse findDiaryById(Long diaryId) {
+		Diary diary = diaryRepository.findById(diaryId)
 				.orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 		return DiaryResponse.from(diary);
 	}
@@ -50,7 +50,7 @@ public class DiaryService {
 	}
 
 	@Transactional
-	public DiaryWithQuestionsAndAnswersResponse answerDiaryQuestions(Long id, List<QuestionAnswerRequest> requests) {
+	public DiaryWithQuestionsAndAnswersResponse answerDiaryQuestions(Long diaryId, List<QuestionAnswerRequest> requests) {
 		requests.forEach(request -> {
 			Question question = questionRepository.findById(request.questionId())
 					.orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
@@ -58,7 +58,7 @@ public class DiaryService {
 			answerRepository.save(answer);
 		});
 		// TODO : AI에게 질문 답변 묶음 보내주기
-		Diary diary = diaryRepository.findById(id)
+		Diary diary = diaryRepository.findById(diaryId)
 				.orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 		return DiaryWithQuestionsAndAnswersResponse.from(diary);
 	}
