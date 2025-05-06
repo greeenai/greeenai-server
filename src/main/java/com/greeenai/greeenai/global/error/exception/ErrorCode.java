@@ -33,6 +33,10 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지입니다."),
     CONTENT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일 유형입니다."),
     MULTIPART_FILE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일입니다."),
+
+    // Diary
+    DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일기입니다."),
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
     ;
 
     private final HttpStatus httpStatus;
