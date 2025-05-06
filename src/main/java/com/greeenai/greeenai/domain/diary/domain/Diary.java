@@ -1,15 +1,14 @@
 package com.greeenai.greeenai.domain.diary.domain;
 
 import com.greeenai.greeenai.domain.common.BaseEntity;
+import com.greeenai.greeenai.domain.image.domain.Image;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
@@ -28,6 +27,11 @@ public class Diary extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Setter
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id", unique = true)
+    private Image image;
 
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
