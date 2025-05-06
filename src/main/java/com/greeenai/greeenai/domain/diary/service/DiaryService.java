@@ -65,4 +65,21 @@ public class DiaryService {
         log.info("answerDiaryQuestions 완료 - diaryId: {}", diaryId);
         return DiaryWithQuestionsAndAnswersResponse.from(diary);
     }
+
+    @Transactional
+    public void deleteDiary(Long diaryId) {
+        Member currentMember = memberUtil.getCurrentMember();
+        Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        validateDiaryOwner(currentMember.getId(), diary.getMember().getId());
+
+        diaryRepository.delete(diary);
+        log.info("[DiaryService] 일기 삭제 성공 : diaryId={}", diaryId);
+    }
+
+    private void validateDiaryOwner(Long currentMemberId, Long diaryOwnerId) {
+        if (!currentMemberId.equals(diaryOwnerId)) {
+            throw new CustomException(DIARY_OWNER_MISMATCH);
+        }
+    }
 }
