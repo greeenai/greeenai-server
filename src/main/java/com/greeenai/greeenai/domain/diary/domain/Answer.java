@@ -12,26 +12,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String content;
+    private String content;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_id", nullable = false)
-	private Question question;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private Answer(String content, Question question) {
-		this.content = content;
-		this.question = question;
-	}
+    @Builder(access = AccessLevel.PRIVATE)
+    private Answer(String content, Question question) {
+        this.content = content;
+        this.question = question;
+    }
 
-	public static Answer create(String content, Question question) {
-		return Answer.builder()
-				.content(content)
-				.question(question)
-				.build();
-	}
+    public static Answer create(String content, Question question) {
+        return Answer.builder().content(content).question(question).build();
+    }
 }

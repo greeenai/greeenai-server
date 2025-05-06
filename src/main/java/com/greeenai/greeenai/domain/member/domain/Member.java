@@ -3,11 +3,9 @@ package com.greeenai.greeenai.domain.member.domain;
 import com.greeenai.greeenai.domain.common.BaseEntity;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
