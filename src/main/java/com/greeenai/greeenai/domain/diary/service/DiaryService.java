@@ -25,7 +25,6 @@ import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DiaryService {
 
@@ -34,6 +33,7 @@ public class DiaryService {
 	private final AnswerRepository answerRepository;
 	private final MemberUtil memberUtil;
 
+	@Transactional(readOnly = true)
 	public DiaryResponse findDiaryById(Long id) {
 		Diary diary = diaryRepository.findById(id)
 				.orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
