@@ -46,4 +46,8 @@ public class Diary extends BaseEntity {
                 .member(member)
                 .build();
     }
+
+    public void updateEntryDate(LocalDate entryDate) {
+        this.entryDate = entryDate;
+    }
 }
