@@ -8,6 +8,7 @@ import com.greeenai.greeenai.domain.image.domain.ImageType;
 import com.greeenai.greeenai.domain.image.repository.ImageRepository;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.property.S3Properties;
+import com.greeenai.greeenai.infra.cloudfront.CloudFrontUrlGenerator;
 import java.io.IOException;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,11 @@ public class ImageService {
                 .build();
 
         return s3Presigner.presignGetObject(presignRequest).url().toString();
+    }
+
+    @Transactional(readOnly = true)
+    public String getUrl(Image image) {
+        return CloudFrontUrlGenerator.generateUrlByFileName(image.generateFileName());
     }
 
     private PutObjectRequest getPutObjectRequest(Image image) {

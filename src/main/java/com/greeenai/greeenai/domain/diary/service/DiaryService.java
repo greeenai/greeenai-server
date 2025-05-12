@@ -14,6 +14,7 @@ import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsRespons
 import com.greeenai.greeenai.domain.diary.repository.AnswerRepository;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
+import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.util.MemberUtil;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DiaryService {
 
+    private final ImageService imageService;
     private final DiaryRepository diaryRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
@@ -42,7 +44,7 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public String findDiaryDownloadUrlById(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        return diary.getImage().getUrl();
+        return imageService.getUrl(diary.getImage());
     }
 
     @Transactional

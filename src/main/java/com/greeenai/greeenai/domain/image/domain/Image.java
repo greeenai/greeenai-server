@@ -1,7 +1,6 @@
 package com.greeenai.greeenai.domain.image.domain;
 
 import com.greeenai.greeenai.domain.common.BaseEntity;
-import com.greeenai.greeenai.infra.cloudfront.CloudFrontUrlGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,9 +45,5 @@ public class Image extends BaseEntity {
 
     public String generateFileName() {
         return imageType.getValue() + "/" + targetId + "/" + imageKey + "." + contentType.getExtension();
-    }
-
-    public String getUrl() {
-        return CloudFrontUrlGenerator.generateUrlByFileName(this.generateFileName());
     }
 }
