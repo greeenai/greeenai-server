@@ -53,7 +53,7 @@ public class DiaryService {
         Diary diary = Diary.create(null, request.getEntryDate(), currentMember);
         diaryRepository.save(diary);
         // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
-        log.info("[createDiary] 일기 생성 성공 : diaryId={}", diary.getId());
+        log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
         return DiaryWithQuestionsResponse.from(diary);
     }
 
@@ -69,7 +69,7 @@ public class DiaryService {
         });
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        log.info("[answerDiaryQuestions] 질문 답변 성공 : diaryId={}", diaryId);
+        log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
         return DiaryWithQuestionsAndAnswersResponse.from(diary);
     }
 
