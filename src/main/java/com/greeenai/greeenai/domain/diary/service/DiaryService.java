@@ -46,19 +46,17 @@ public class DiaryService {
 
     @Transactional
     public DiaryWithQuestionsResponse createDiary(DiaryCreateRequest request) {
-        log.info("createDiary 시작 - entryDate: {}", request.getEntryDate());
         Member currentMember = memberUtil.getCurrentMember();
         Diary diary = Diary.create(null, request.getEntryDate(), currentMember);
         diaryRepository.save(diary);
         // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
-        log.info("createDiary 완료 - diaryId: {}", diary.getId());
+        log.info("[createDiary] 일기 생성 성공 : diaryId={}", diary.getId());
         return DiaryWithQuestionsResponse.from(diary);
     }
 
     @Transactional
     public DiaryWithQuestionsAndAnswersResponse answerDiaryQuestions(
             Long diaryId, List<QuestionAnswerRequest> requests) {
-        log.info("answerDiaryQuestions 시작 - diaryId: {}, 답변 개수: {}", diaryId, requests.size());
         requests.forEach(request -> {
             Question question = questionRepository
                     .findById(request.questionId())
@@ -68,7 +66,7 @@ public class DiaryService {
         });
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        log.info("answerDiaryQuestions 완료 - diaryId: {}", diaryId);
+        log.info("[answerDiaryQuestions] 질문 답변 성공 : diaryId={}", diaryId);
         return DiaryWithQuestionsAndAnswersResponse.from(diary);
     }
 }
