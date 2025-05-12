@@ -1,6 +1,7 @@
 package com.greeenai.greeenai.domain.diary.controller;
 
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
+import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnswersResponse;
@@ -42,5 +43,18 @@ public class DiaryController {
             @PathVariable Long diaryId, @Valid @RequestBody List<QuestionAnswerRequest> requests) {
         DiaryWithQuestionsAndAnswersResponse response = diaryService.answerDiaryQuestions(diaryId, requests);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{diaryId}")
+    public ResponseEntity<Void> updateDiaryEntryDate(
+            @PathVariable Long diaryId, @Valid @RequestBody DiaryUpdateRequest request) {
+        diaryService.updateDiaryEntryDate(diaryId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{diaryId}")
+    public ResponseEntity<Void> deleteDiary(@PathVariable Long diaryId) {
+        diaryService.deleteDiary(diaryId);
+        return ResponseEntity.ok().build();
     }
 }
