@@ -6,6 +6,7 @@ import com.greeenai.greeenai.domain.diary.domain.Answer;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Question;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
+import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnswersResponse;
@@ -64,6 +65,18 @@ public class DiaryService {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         log.info("answerDiaryQuestions 완료 - diaryId: {}", diaryId);
         return DiaryWithQuestionsAndAnswersResponse.from(diary);
+    }
+
+    @Transactional
+    public void updateDiaryEntryDate(Long diaryId, DiaryUpdateRequest request) {
+        Member currentMember = memberUtil.getCurrentMember();
+        Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        validateDiaryOwner(currentMember.getId(), diary.getMember().getId());
+
+        diary.updateEntryDate(request.entryDate());
+        diaryRepository.save(diary);
+        log.info("[DiaryService] 일기 날짜 수정 성공 : diaryId={}", diaryId);
     }
 
     @Transactional
