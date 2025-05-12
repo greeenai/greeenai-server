@@ -26,7 +26,6 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ImageService {
 
@@ -58,6 +57,7 @@ public class ImageService {
         }
     }
 
+    @Transactional(readOnly = true)
     public String generateImageDownloadUrl(Long imageId) {
         Image image = imageRepository.findById(imageId).orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
 
