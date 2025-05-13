@@ -38,7 +38,8 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        return DiaryResponse.from(diary);
+        String imageUrl = imageService.getUrl(diary.getImage());
+        return DiaryResponse.from(diary, imageUrl);
     }
 
     @Transactional(readOnly = true)
