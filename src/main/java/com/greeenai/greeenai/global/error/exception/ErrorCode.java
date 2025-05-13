@@ -33,6 +33,8 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지입니다."),
     CONTENT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일 유형입니다."),
     MULTIPART_FILE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일입니다."),
+    S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에 실패했습니다."),
+    FILE_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 읽기에 실패했습니다."),
 
     // Diary
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일기입니다."),

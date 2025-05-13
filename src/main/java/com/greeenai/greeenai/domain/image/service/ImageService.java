@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +35,7 @@ public class ImageService {
     private final S3Properties s3Properties;
 
     @Transactional
-    public Long uploadImage(MultipartFile multipartFile, ImageType imageType, Long targetId) throws IOException {
+    public Image uploadImage(MultipartFile multipartFile, ImageType imageType, Long targetId) {
         validateMultipartFile(multipartFile);
 
         ContentType contentType = ContentType.from(multipartFile.getContentType());
@@ -50,11 +49,14 @@ public class ImageService {
             RequestBody rb = getFileRequestBody(multipartFile);
             s3Client.putObject(request, rb);
 
-            return savedImage.getId();
+            return savedImage;
 
         } catch (S3Exception e) {
             imageRepository.delete(savedImage);
-            throw new FileUploadException("S3 파일 업로드 실패", e);
+            throw new CustomException(S3_UPLOAD_FAILED);
+        } catch (IOException e) {
+            imageRepository.delete(savedImage);
+            throw new CustomException(FILE_READ_FAILED);
         }
     }
 

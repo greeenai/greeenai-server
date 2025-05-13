@@ -33,21 +33,27 @@ public class Diary extends BaseEntity {
     @JoinColumn(name = "image_id", unique = true)
     private Image image;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "diary_id")
+    private List<Image> userImages = new ArrayList<>();
+
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Diary(String content, LocalDate entryDate, Member member) {
+    private Diary(String content, LocalDate entryDate, Member member, List<Image> userImages) {
         this.content = content;
         this.entryDate = entryDate;
         this.member = member;
+        this.userImages = userImages;
     }
 
-    public static Diary create(String content, LocalDate entryDate, Member member) {
+    public static Diary create(String content, LocalDate entryDate, Member member, List<Image> userImages) {
         return Diary.builder()
                 .content(content)
                 .entryDate(entryDate)
                 .member(member)
+                .userImages(userImages)
                 .build();
     }
 

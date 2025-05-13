@@ -14,6 +14,8 @@ import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsRespons
 import com.greeenai.greeenai.domain.diary.repository.AnswerRepository;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
+import com.greeenai.greeenai.domain.image.domain.Image;
+import com.greeenai.greeenai.domain.image.domain.ImageType;
 import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -50,7 +53,8 @@ public class DiaryService {
     @Transactional
     public DiaryWithQuestionsResponse createDiary(DiaryCreateRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
-        Diary diary = Diary.create(null, request.getEntryDate(), currentMember);
+        List<Image> userImages = saveUserImages(request.getPhotos());
+        Diary diary = Diary.create(null, request.getEntryDate(), currentMember, userImages);
         diaryRepository.save(diary);
         // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
@@ -104,5 +108,12 @@ public class DiaryService {
 
     private String getDiaryImageUrl(Diary diary) {
         return imageService.getUrl(diary.getImage());
+    }
+
+    private List<Image> saveUserImages(List<MultipartFile> userImages) {
+        Member currentMember = memberUtil.getCurrentMember();
+        return userImages.stream()
+                .map(userImage -> imageService.uploadImage(userImage, ImageType.USER, currentMember.getId()))
+                .toList();
     }
 }
