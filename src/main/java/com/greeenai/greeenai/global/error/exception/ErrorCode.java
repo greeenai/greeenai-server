@@ -39,6 +39,7 @@ public enum ErrorCode {
     // Diary
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일기입니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
+    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 옵션입니다."),
     DIARY_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "일기 소유자와 현재 사용자가 다릅니다."),
     ;
 

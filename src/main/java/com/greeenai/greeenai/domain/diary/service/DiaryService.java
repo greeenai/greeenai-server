@@ -2,18 +2,16 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.domain.diary.domain.Answer;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
-import com.greeenai.greeenai.domain.diary.domain.Question;
+import com.greeenai.greeenai.domain.diary.domain.Option;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnswersResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsResponse;
-import com.greeenai.greeenai.domain.diary.repository.AnswerRepository;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
-import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
+import com.greeenai.greeenai.domain.diary.repository.OptionRepository;
 import com.greeenai.greeenai.domain.image.domain.Image;
 import com.greeenai.greeenai.domain.image.domain.ImageType;
 import com.greeenai.greeenai.domain.image.service.ImageService;
@@ -34,8 +32,7 @@ public class DiaryService {
 
     private final ImageService imageService;
     private final DiaryRepository diaryRepository;
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
+    private final OptionRepository optionRepository;
     private final MemberUtil memberUtil;
 
     @Transactional(readOnly = true)
@@ -65,11 +62,10 @@ public class DiaryService {
     public DiaryWithQuestionsAndAnswersResponse answerDiaryQuestions(
             Long diaryId, List<QuestionAnswerRequest> requests) {
         requests.forEach(request -> {
-            Question question = questionRepository
-                    .findById(request.questionId())
-                    .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
-            Answer answer = Answer.create(request.answerContent(), question);
-            answerRepository.save(answer);
+            Option option = optionRepository
+                    .findById(request.optionId())
+                    .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
+            option.markAsAnswer();
         });
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer extends BaseEntity {
+public class Option extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,17 +18,19 @@ public class Answer extends BaseEntity {
 
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    private boolean isAnswer;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Answer(String content, Question question) {
+    private Option(String content, boolean isAnswer) {
         this.content = content;
-        this.question = question;
+        this.isAnswer = isAnswer;
     }
 
-    public static Answer create(String content, Question question) {
-        return Answer.builder().content(content).question(question).build();
+    public static Option create(String content, boolean isAnswer) {
+        return Option.builder().content(content).isAnswer(isAnswer).build();
+    }
+
+    public void markAsAnswer() {
+        this.isAnswer = true;
     }
 }
