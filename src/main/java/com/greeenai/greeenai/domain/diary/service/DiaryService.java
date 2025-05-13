@@ -38,8 +38,7 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        String imageUrl = imageService.getUrl(diary.getImage());
-        return DiaryResponse.from(diary, imageUrl);
+        return DiaryResponse.from(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +54,7 @@ public class DiaryService {
         diaryRepository.save(diary);
         // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
-        return DiaryWithQuestionsResponse.from(diary);
+        return DiaryWithQuestionsResponse.from(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional
@@ -71,7 +70,7 @@ public class DiaryService {
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
-        return DiaryWithQuestionsAndAnswersResponse.from(diary);
+        return DiaryWithQuestionsAndAnswersResponse.from(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional
@@ -101,5 +100,9 @@ public class DiaryService {
         if (!currentMemberId.equals(diaryOwnerId)) {
             throw new CustomException(DIARY_OWNER_MISMATCH);
         }
+    }
+
+    private String getDiaryImageUrl(Diary diary) {
+        return imageService.getUrl(diary.getImage());
     }
 }

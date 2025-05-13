@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record DiaryWithQuestionsAndAnswersResponse(
-        Long id, String content, LocalDate entryDate, List<QuestionWithAnswerResponse> questions) {
-    public static DiaryWithQuestionsAndAnswersResponse from(Diary diary) {
+        Long id, String imageUrl, String content, LocalDate entryDate, List<QuestionWithAnswerResponse> questions) {
+    public static DiaryWithQuestionsAndAnswersResponse from(Diary diary, String imageUrl) {
         return new DiaryWithQuestionsAndAnswersResponse(
-                diary.getId(), diary.getContent(), diary.getEntryDate(), getDiaryQuestionsAndAnswers(diary));
+                diary.getId(), imageUrl, diary.getContent(), diary.getEntryDate(), getDiaryQuestionsAndAnswers(diary));
     }
 
     private static List<QuestionWithAnswerResponse> getDiaryQuestionsAndAnswers(Diary diary) {
