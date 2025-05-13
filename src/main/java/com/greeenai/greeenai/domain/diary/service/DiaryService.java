@@ -4,14 +4,15 @@ import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Option;
+import com.greeenai.greeenai.domain.diary.domain.Question;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
+import com.greeenai.greeenai.domain.diary.dto.request.GenerateQuestionsRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
-import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnswersResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsResponse;
+import com.greeenai.greeenai.domain.diary.dto.response.*;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.diary.repository.OptionRepository;
+import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
 import com.greeenai.greeenai.domain.image.domain.Image;
 import com.greeenai.greeenai.domain.image.domain.ImageType;
 import com.greeenai.greeenai.domain.image.service.ImageService;
@@ -21,8 +22,13 @@ import com.greeenai.greeenai.global.util.MemberUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -32,6 +38,7 @@ public class DiaryService {
 
     private final ImageService imageService;
     private final DiaryRepository diaryRepository;
+    private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
     private final MemberUtil memberUtil;
 
@@ -53,7 +60,23 @@ public class DiaryService {
         List<Image> userImages = saveUserImages(request.getPhotos());
         Diary diary = Diary.create(null, request.getEntryDate(), currentMember, userImages);
         diaryRepository.save(diary);
-        // TODO : AI에게 그림일기 생성용 사진 주고 질문 받아오기
+
+        List<String> userImageUrls =
+                userImages.stream().map(imageService::getUrl).toList();
+        List<QuestionResponse> questionResponses = generateQuestionsFromAI(userImageUrls);
+        List<Question> questions = questionResponses.stream()
+                .map(qr -> Question.create(
+                        qr.title(),
+                        qr.caption(),
+                        qr.prompt(),
+                        diary,
+                        qr.options().stream()
+                                .map(opt -> Option.create(opt.content(), false))
+                                .toList()))
+                .toList();
+
+        questionRepository.saveAll(questions);
+
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
         return DiaryWithQuestionsResponse.from(diary, getDiaryImageUrl(diary));
     }
@@ -111,5 +134,22 @@ public class DiaryService {
         return userImages.stream()
                 .map(userImage -> imageService.uploadImage(userImage, ImageType.USER, currentMember.getId()))
                 .toList();
+    }
+
+    private List<QuestionResponse> generateQuestionsFromAI(List<String> imageUrls) {
+        GenerateQuestionsRequest aiRequest = GenerateQuestionsRequest.from(imageUrls);
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<GenerateQuestionsRequest> entity = new HttpEntity<>(aiRequest, headers);
+
+        ResponseEntity<GenerateQuestionsResponse> aiResponse = restTemplate.postForEntity(
+                "https://kaggom.online/generate-questions", // TODO: 유효한 URL로 변경
+                entity,
+                GenerateQuestionsResponse.class);
+
+        return aiResponse.getBody().questions();
     }
 }
