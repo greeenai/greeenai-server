@@ -90,7 +90,7 @@ public class DiaryService {
         questionRepository.saveAll(questions);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
-        return DiaryWithQuestionsResponse.from(diary, getDiaryImageUrl(diary));
+        return DiaryWithQuestionsResponse.of(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional
@@ -105,7 +105,7 @@ public class DiaryService {
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
-        return DiaryWithQuestionsAndAnswersResponse.from(diary, getDiaryImageUrl(diary));
+        return DiaryWithQuestionsAndAnswersResponse.of(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional

@@ -6,7 +6,7 @@ import java.util.List;
 
 public record DiaryWithQuestionsResponse(
         Long id, String imageUrl, String content, LocalDate entryDate, List<QuestionResponse> questions) {
-    public static DiaryWithQuestionsResponse from(Diary diary, String imageUrl) {
+    public static DiaryWithQuestionsResponse of(Diary diary, String imageUrl) {
         return new DiaryWithQuestionsResponse(
                 diary.getId(), imageUrl, diary.getContent(), diary.getEntryDate(), getDiaryQuestions(diary));
     }
