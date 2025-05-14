@@ -5,10 +5,7 @@ import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Option;
 import com.greeenai.greeenai.domain.diary.domain.Question;
-import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
-import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
-import com.greeenai.greeenai.domain.diary.dto.request.GenerateQuestionsRequest;
-import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
+import com.greeenai.greeenai.domain.diary.dto.request.*;
 import com.greeenai.greeenai.domain.diary.dto.response.*;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.diary.repository.OptionRepository;
@@ -19,6 +16,8 @@ import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.util.MemberUtil;
+import jakarta.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,11 +44,24 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        return DiaryResponse.from(diary, getDiaryImageUrl(diary));
+        return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
 
+	@Transactional(readOnly = true)
+	public List<DiaryResponse> findAllMyDiaries(@Nullable LocalDate entryDate) {
+		Member currentMember = memberUtil.getCurrentMember();
+		List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
+
+		return myDiaries.stream()
+				.map(diary -> {
+					String imageUrl = imageService.getUrl(diary.getImage());
+					return DiaryResponse.of(diary, imageUrl);
+				})
+				.toList();
+	}
+
     @Transactional(readOnly = true)
-    public String findDiaryDownloadUrlById(Long diaryId) {
+    public String getDownloadUrlByDiaryId(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         return imageService.generateImageDownloadUrl(diary.getImage().getId());
     }
