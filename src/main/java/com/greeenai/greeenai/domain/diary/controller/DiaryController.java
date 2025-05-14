@@ -8,6 +8,7 @@ import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnsw
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsResponse;
 import com.greeenai.greeenai.domain.diary.service.DiaryService;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class DiaryController {
 
     private final DiaryService diaryService;
+
+    @GetMapping
+    public ResponseEntity<List<DiaryResponse>> getMyDiaries(@RequestParam(required = false) LocalDate entryDate) {
+        List<DiaryResponse> responses = diaryService.findAllMyDiaries(entryDate);
+        return ResponseEntity.ok(responses);
+    }
 
     @PostMapping
     public ResponseEntity<DiaryWithQuestionsResponse> createDiary(@Valid @ModelAttribute DiaryCreateRequest request) {
@@ -34,7 +41,7 @@ public class DiaryController {
 
     @GetMapping("/{diaryId}/download-url")
     public ResponseEntity<String> getDiaryDownloadUrl(@PathVariable Long diaryId) {
-        String downloadUrl = diaryService.findDiaryDownloadUrlById(diaryId);
+        String downloadUrl = diaryService.getDownloadUrlByDiaryId(diaryId);
         return ResponseEntity.ok(downloadUrl);
     }
 

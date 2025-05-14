@@ -18,6 +18,8 @@ import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.util.MemberUtil;
+import jakarta.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +40,12 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        return DiaryResponse.from(diary);
+        String imageUrl = imageService.getUrl(diary.getImage());
+        return DiaryResponse.of(diary, imageUrl);
     }
 
     @Transactional(readOnly = true)
-    public String findDiaryDownloadUrlById(Long diaryId) {
+    public String getDownloadUrlByDiaryId(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         return imageService.getUrl(diary.getImage());
     }
@@ -100,5 +103,18 @@ public class DiaryService {
         if (!currentMemberId.equals(diaryOwnerId)) {
             throw new CustomException(DIARY_OWNER_MISMATCH);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<DiaryResponse> findAllMyDiaries(@Nullable LocalDate entryDate) {
+        Member currentMember = memberUtil.getCurrentMember();
+        List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
+
+        return myDiaries.stream()
+                .map(diary -> {
+                    String imageUrl = imageService.getUrl(diary.getImage());
+                    return DiaryResponse.of(diary, imageUrl);
+                })
+                .toList();
     }
 }
