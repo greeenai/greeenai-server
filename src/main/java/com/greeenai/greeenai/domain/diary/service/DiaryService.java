@@ -53,10 +53,7 @@ public class DiaryService {
 		List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
 
 		return myDiaries.stream()
-				.map(diary -> {
-					String imageUrl = imageService.getUrl(diary.getImage());
-					return DiaryResponse.of(diary, imageUrl);
-				})
+				.map(diary -> DiaryResponse.of(diary, getDiaryImageUrl(diary)))
 				.toList();
 	}
 
