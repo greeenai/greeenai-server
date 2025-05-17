@@ -56,9 +56,10 @@ public class AuthService {
     }
 
     private Member findOrCreate(LoginRequest request) {
-        return memberRepository
-                .findByOauthId(request.oauthId())
-                .orElse(memberRepository.save(
-                        Member.create(request.name(), request.email(), request.oauthId(), request.oAuthProvider())));
+        return memberRepository.findByOauthId(request.oauthId()).orElseGet(() -> {
+            Member newMember =
+                    Member.create(request.name(), request.email(), request.oauthId(), request.oAuthProvider());
+            return memberRepository.save(newMember);
+        });
     }
 }
