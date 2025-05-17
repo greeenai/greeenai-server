@@ -58,7 +58,7 @@ class AuthControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
-            verify(authService, times(1)).login(eq(request), any());
+            verify(authService, times(1)).login(eq(request));
         }
 
         @Test
@@ -73,7 +73,7 @@ class AuthControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
 
-            verify(authService, never()).login(any(), any());
+            verify(authService, never()).login(any());
         }
     }
 

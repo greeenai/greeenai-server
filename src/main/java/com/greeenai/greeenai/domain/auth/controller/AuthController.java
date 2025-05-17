@@ -1,8 +1,8 @@
 package com.greeenai.greeenai.domain.auth.controller;
 
+import com.greeenai.greeenai.domain.auth.dto.LoginResponse;
 import com.greeenai.greeenai.domain.auth.service.AuthService;
 import com.greeenai.greeenai.domain.member.dto.request.LoginRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
-        authService.login(request, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
