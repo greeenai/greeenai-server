@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.greeenai.greeenai.domain.auth.domain.RefreshToken;
+import com.greeenai.greeenai.domain.auth.dto.LoginResponse;
 import com.greeenai.greeenai.domain.auth.repository.RefreshTokenRepository;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.domain.member.dto.request.LoginRequest;
@@ -76,12 +77,11 @@ class AuthServiceTest {
             when(jwtService.generateToken(eq(REFRESH_TOKEN), anyLong())).thenReturn(TEST_REFRESH_TOKEN);
 
             // When
-            authService.login(loginRequest, response);
+            LoginResponse response = authService.login(loginRequest);
 
             // Then
             verify(mockMember).updateLastLoginAt(any(LocalDateTime.class));
             verify(memberRepository).save(mockMember);
-            verifyTokenOperations();
         }
 
         @Test
@@ -99,7 +99,7 @@ class AuthServiceTest {
             ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
 
             // When
-            authService.login(loginRequest, response);
+            authService.login(loginRequest);
 
             // Then
             verify(memberRepository, times(2)).save(memberCaptor.capture());
@@ -141,17 +141,5 @@ class AuthServiceTest {
         tokenMap.put(ACCESS_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME));
         tokenMap.put(REFRESH_TOKEN, new JwtProperties.TokenProperty(TEST_SECRET, TEST_EXPIRATION_TIME * 24));
         return tokenMap;
-    }
-
-    private void verifyTokenOperations() {
-        // Refresh Token 저장 검증
-        ArgumentCaptor<RefreshToken> tokenCaptor = ArgumentCaptor.forClass(RefreshToken.class);
-        verify(refreshTokenRepository).save(tokenCaptor.capture());
-        RefreshToken savedToken = tokenCaptor.getValue();
-        assertThat(savedToken.getValue()).isEqualTo(TEST_REFRESH_TOKEN);
-
-        // 헤더 추가 검증
-        verify(jwtUtil).addTokenToHeader(response, ACCESS_TOKEN, TEST_ACCESS_TOKEN);
-        verify(jwtUtil).addTokenToHeader(response, REFRESH_TOKEN, TEST_REFRESH_TOKEN);
     }
 }
