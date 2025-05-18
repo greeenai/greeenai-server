@@ -39,7 +39,6 @@ public class DiaryService {
     private final ImageService imageService;
     private final DiaryRepository diaryRepository;
     private final QuestionRepository questionRepository;
-    private final OptionRepository optionRepository;
     private final MemberUtil memberUtil;
 
     @Transactional(readOnly = true)
