@@ -27,20 +27,37 @@ public class AIClient {
 
     public List<GeneratedQuestion> generateQuestions(List<String> imageUrls) {
         GenerateQuestionsRequest request = GenerateQuestionsRequest.from(imageUrls);
+        int maxAttempts = 3;
 
-        GenerateQuestionsResponse response = webClient
-                .post()
-                .uri("/generate-question")
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(GenerateQuestionsResponse.class)
-                .block();
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            GenerateQuestionsResponse response;
+            try {
+                response = webClient
+                        .post()
+                        .uri("/generate-question")
+                        .bodyValue(request)
+                        .retrieve()
+                        .bodyToMono(GenerateQuestionsResponse.class)
+                        .block();
+            } catch (Exception e) {
+                throw new CustomException(AI_QUESTION_GENERATION_FAILED); // 예외는 즉시 중단
+            }
 
-        if (response == null || response.questions() == null) {
-            throw new CustomException(AI_QUESTION_GENERATION_FAILED);
+            if (isValidQuestionsResponse(response)) {
+                return response.questions(); // 유효 응답
+            }
+
+            if (attempt < maxAttempts) {
+                try {
+                    Thread.sleep(1000); // 다음 시도까지 대기
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new CustomException(AI_QUESTION_GENERATION_FAILED);
+                }
+            }
         }
 
-        return response.questions();
+        throw new CustomException(AI_QUESTION_GENERATION_FAILED);
     }
 
     public GeneratedImage generateImage(List<DiaryEntry> entries) {
@@ -82,5 +99,26 @@ public class AIClient {
         }
 
         return response.diary();
+    }
+
+    private boolean isValidQuestionsResponse(GenerateQuestionsResponse response) {
+        if (response == null
+                || response.questions() == null
+                || response.questions().isEmpty()) {
+            return false;
+        }
+
+        for (GenerateQuestionsResponse.GeneratedQuestion q : response.questions()) {
+            if (q == null
+                    || q.title() == null
+                    || q.caption() == null
+                    || q.prompt() == null
+                    || q.options() == null
+                    || q.options().isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
