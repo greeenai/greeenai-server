@@ -2,6 +2,8 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
+import com.greeenai.greeenai.domain.ai.dto.response.AIQuestionResponse;
+import com.greeenai.greeenai.domain.ai.service.AIClient;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Option;
 import com.greeenai.greeenai.domain.diary.domain.Question;

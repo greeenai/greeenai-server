@@ -1,14 +1,14 @@
-package com.greeenai.greeenai.domain.diary.service;
+package com.greeenai.greeenai.domain.ai.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateDiaryRequest;
-import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateImagesRequest;
-import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateQuestionsRequest;
-import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateDiaryResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateImagesResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateQuestionsResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.AIQuestionResponse;
+import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateDiaryRequest;
+import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateImagesRequest;
+import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateQuestionsRequest;
+import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateDiaryResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateImagesResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateQuestionsResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.AIQuestionResponse;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
