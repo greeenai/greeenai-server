@@ -73,17 +73,7 @@ public class DiaryService {
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
         List<QuestionResponse> questionResponses = generateQuestionsFromAI(userImageUrls);
-        List<Question> questions = questionResponses.stream()
-                .map(qr -> Question.create(
-                        qr.title(),
-                        qr.caption(),
-                        qr.prompt(),
-                        diary,
-                        qr.options().stream()
-                                .map(opt -> Option.create(opt.content(), false))
-                                .toList()))
-                .toList();
-
+        List<Question> questions = createQuestions(questionResponses, diary);
         questionRepository.saveAll(questions);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
@@ -142,6 +132,19 @@ public class DiaryService {
         Member currentMember = memberUtil.getCurrentMember();
         return userImages.stream()
                 .map(userImage -> imageService.uploadImage(userImage, ImageType.USER, currentMember.getId()))
+                .toList();
+    }
+
+    private List<Question> createQuestions(List<QuestionResponse> questionResponses, Diary diary) {
+        return questionResponses.stream()
+                .map(qr -> Question.create(
+                        qr.title(),
+                        qr.caption(),
+                        qr.prompt(),
+                        diary,
+                        qr.options().stream()
+                                .map(opt -> Option.create(opt.content(), false))
+                                .toList()))
                 .toList();
     }
 
