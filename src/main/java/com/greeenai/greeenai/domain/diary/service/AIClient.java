@@ -2,8 +2,10 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
+import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateDiaryRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateImagesRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.AIGenerateQuestionsRequest;
+import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateDiaryResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateImagesResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.AIGenerateQuestionsResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.AIQuestionResponse;
@@ -53,5 +55,23 @@ public class AIClient {
         }
 
         return response.generatedUrls();
+    }
+
+    public String generateDiary(List<AIGenerateDiaryRequest.DiaryEntry> entries) {
+        AIGenerateDiaryRequest request = AIGenerateDiaryRequest.of(entries);
+
+        AIGenerateDiaryResponse response = webClient
+                .post()
+                .uri("/generate-diary")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(AIGenerateDiaryResponse.class)
+                .block();
+
+        if (response == null || response.diary() == null) {
+            throw new CustomException(AI_DIARY_GENERATION_FAILED);
+        }
+
+        return response.diary();
     }
 }

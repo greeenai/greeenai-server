@@ -45,6 +45,7 @@ public enum ErrorCode {
     // AI
     AI_QUESTION_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 질문 생성에 실패했습니다."),
     AI_IMAGE_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 이미지 생성에 실패했습니다."),
+    AI_DIARY_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 일기 생성에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;
