@@ -4,7 +4,6 @@ import com.greeenai.greeenai.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.*;
 
 @Getter
