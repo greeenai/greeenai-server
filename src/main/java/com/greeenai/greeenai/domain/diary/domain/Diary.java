@@ -25,6 +25,10 @@ public class Diary extends BaseEntity {
     @Column(nullable = false)
     private LocalDate entryDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DiaryStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -46,6 +50,7 @@ public class Diary extends BaseEntity {
         this.entryDate = entryDate;
         this.member = member;
         this.userImages = userImages;
+        this.status = DiaryStatus.IN_PROGRESS;
     }
 
     public static Diary create(LocalDate entryDate, Member member, List<Image> userImages) {
@@ -58,5 +63,9 @@ public class Diary extends BaseEntity {
 
     public void updateEntryDate(LocalDate entryDate) {
         this.entryDate = entryDate;
+    }
+
+    public void markAsCompleted() {
+        this.status = DiaryStatus.COMPLETED;
     }
 }

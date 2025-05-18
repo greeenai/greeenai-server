@@ -92,6 +92,7 @@ public class DiaryService {
         Image diaryImage = saveDiaryImage(diary, generatedImage);
         diary.setImage(diaryImage);
         diary.setContent(diaryContent);
+        diary.markAsCompleted();
 
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
