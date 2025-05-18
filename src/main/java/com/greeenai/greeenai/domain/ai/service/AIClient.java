@@ -2,12 +2,12 @@ package com.greeenai.greeenai.domain.ai.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
+import com.greeenai.greeenai.domain.ai.dto.request.DiaryEntry;
 import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest;
-import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest.DiaryEntry;
-import com.greeenai.greeenai.domain.ai.dto.request.GenerateImagesRequest;
+import com.greeenai.greeenai.domain.ai.dto.request.GenerateImageRequest;
 import com.greeenai.greeenai.domain.ai.dto.request.GenerateQuestionsRequest;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateDiaryResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.GenerateImagesResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateImageResponse;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
 import com.greeenai.greeenai.global.error.exception.CustomException;
@@ -40,15 +40,15 @@ public class AIClient {
         return response.questions();
     }
 
-    public List<String> generateImages(List<String> imageUrls, List<String> captions) {
-        GenerateImagesRequest request = GenerateImagesRequest.of(imageUrls, captions);
+    public List<String> generateImages(List<DiaryEntry> entries) {
+        GenerateImageRequest request = GenerateImageRequest.of(entries);
 
-        GenerateImagesResponse response = webClient
+        GenerateImageResponse response = webClient
                 .post()
                 .uri("/generate-image")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(GenerateImagesResponse.class)
+                .bodyToMono(GenerateImageResponse.class)
                 .block();
 
         if (response == null) {
