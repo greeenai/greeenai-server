@@ -43,7 +43,8 @@ public enum ErrorCode {
     DIARY_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "일기 소유자와 현재 사용자가 다릅니다."),
 
     // AI
-    AI_RESPONSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI 서버 응답이 유효하지 않습니다."),
+    AI_QUESTION_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 질문 생성에 실패했습니다."),
+    AI_IMAGE_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 이미지 생성에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;
