@@ -2,7 +2,9 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
+import com.greeenai.greeenai.domain.ai.dto.request.DiaryEntry;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
+import com.greeenai.greeenai.domain.ai.dto.response.GeneratedImage;
 import com.greeenai.greeenai.domain.ai.service.AIClient;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Option;
@@ -82,8 +84,13 @@ public class DiaryService {
 
     @Transactional
     public DiaryResponse answerDiaryQuestions(Long diaryId, List<QuestionAnswerRequest> requests) {
-        // TODO : AI에게 질문 답변 묶음 보내주기
+        List<DiaryEntry> entries = toDiaryEntries(requests);
+        GeneratedImage generatedImage = aiClient.generateImage(entries);
+
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        Image diaryImage = saveDiaryImage(diary, generatedImage);
+        diary.setImage(diaryImage);
+
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
@@ -128,6 +135,11 @@ public class DiaryService {
                 .toList();
     }
 
+    private Image saveDiaryImage(Diary diary, GeneratedImage generatedImage) {
+        return imageService.uploadImage(
+                generatedImage.bytes(), generatedImage.contentType(), ImageType.DIARY, diary.getId());
+    }
+
     private List<Question> createQuestions(List<GeneratedQuestion> generatedQuestions, Diary diary) {
         return generatedQuestions.stream()
                 .map(question -> Question.create(
@@ -136,6 +148,17 @@ public class DiaryService {
                         question.prompt(),
                         diary,
                         question.options().stream().map(Option::create).toList()))
+                .toList();
+    }
+
+    private List<DiaryEntry> toDiaryEntries(List<QuestionAnswerRequest> requests) {
+        return requests.stream()
+                .map(request -> {
+                    Question question = questionRepository
+                            .findById(request.questionId())
+                            .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
+                    return DiaryEntry.of(question, request.answerContent());
+                })
                 .toList();
     }
 }
