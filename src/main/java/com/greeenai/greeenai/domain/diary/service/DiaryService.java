@@ -86,10 +86,12 @@ public class DiaryService {
     public DiaryResponse answerDiaryQuestions(Long diaryId, List<QuestionAnswerRequest> requests) {
         List<DiaryEntry> entries = toDiaryEntries(requests);
         GeneratedImage generatedImage = aiClient.generateImage(entries);
+        String diaryContent = aiClient.generateDiary(entries);
 
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         Image diaryImage = saveDiaryImage(diary, generatedImage);
         diary.setImage(diaryImage);
+        diary.setContent(diaryContent);
 
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
