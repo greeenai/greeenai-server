@@ -7,6 +7,7 @@ import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.Ge
 import com.greeenai.greeenai.domain.ai.dto.response.GeneratedImage;
 import com.greeenai.greeenai.domain.ai.service.AIClient;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
+import com.greeenai.greeenai.domain.diary.domain.DiaryStatus;
 import com.greeenai.greeenai.domain.diary.domain.Option;
 import com.greeenai.greeenai.domain.diary.domain.Question;
 import com.greeenai.greeenai.domain.diary.dto.request.*;
@@ -43,7 +44,9 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
-        Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        Diary diary = diaryRepository.findById(diaryId)
+                .filter(d -> d.getStatus() == DiaryStatus.COMPLETED)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
 
@@ -53,6 +56,7 @@ public class DiaryService {
         List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
 
         return myDiaries.stream()
+                .filter(diary -> diary.getStatus() == DiaryStatus.COMPLETED)
                 .map(diary -> DiaryResponse.of(diary, getDiaryImageUrl(diary)))
                 .toList();
     }
