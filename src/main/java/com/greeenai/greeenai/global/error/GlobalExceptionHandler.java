@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -87,6 +88,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error("HttpMessageNotReadable : {}", ex.getMessage(), ex);
         final ErrorCode errorCode = HTTP_MESSAGE_NOT_READABLE;
+        return createErrorResponseEntity(ex, errorCode);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        log.error("MaxUploadSizeExceededException : {}", ex.getMessage(), ex);
+        final ErrorCode errorCode = MAX_UPLOAD_SIZE_EXCEEDED;
         return createErrorResponseEntity(ex, errorCode);
     }
 
