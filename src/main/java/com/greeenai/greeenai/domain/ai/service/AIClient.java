@@ -23,7 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class AIClient {
 
-    private final WebClient webClient;
+    private final WebClient kaggomWebClient;
+    private final WebClient aiWebClient;
 
     public List<GeneratedQuestion> generateQuestions(List<String> imageUrls) {
         GenerateQuestionsRequest request = GenerateQuestionsRequest.from(imageUrls);
@@ -32,7 +33,7 @@ public class AIClient {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             GenerateQuestionsResponse response;
             try {
-                response = webClient
+                response = kaggomWebClient
                         .post()
                         .uri("/generate-question")
                         .bodyValue(request)
@@ -63,10 +64,9 @@ public class AIClient {
     public GeneratedImage generateImage(List<DiaryEntry> entries) {
         GenerateImageRequest request = GenerateImageRequest.of(entries);
 
-        ResponseEntity<byte[]> response = webClient
+        ResponseEntity<byte[]> response = aiWebClient
                 .post()
                 .uri("/generate-image")
-                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
                 .toEntity(byte[].class)
@@ -86,7 +86,7 @@ public class AIClient {
     public String generateDiary(List<DiaryEntry> entries) {
         GenerateDiaryRequest request = GenerateDiaryRequest.of(entries);
 
-        GenerateDiaryResponse response = webClient
+        GenerateDiaryResponse response = kaggomWebClient
                 .post()
                 .uri("/generate-diary")
                 .bodyValue(request)
