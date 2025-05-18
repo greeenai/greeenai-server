@@ -28,7 +28,7 @@ public class AIClient {
 
     public List<GeneratedQuestion> generateQuestions(List<String> imageUrls) {
         GenerateQuestionsRequest request = GenerateQuestionsRequest.from(imageUrls);
-        int maxAttempts = 3;
+        int maxAttempts = 5;
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             GenerateQuestionsResponse response;
