@@ -27,7 +27,7 @@ public class AIClient {
 
         GenerateQuestionsResponse response = webClient
                 .post()
-                .uri("/generate-questions")
+                .uri("/generate-question")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(GenerateQuestionsResponse.class)
@@ -45,7 +45,7 @@ public class AIClient {
 
         GenerateImagesResponse response = webClient
                 .post()
-                .uri("/generate")
+                .uri("/generate-image")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(GenerateImagesResponse.class)
