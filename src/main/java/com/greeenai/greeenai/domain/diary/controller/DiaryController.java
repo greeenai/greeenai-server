@@ -4,7 +4,6 @@ import com.greeenai.greeenai.domain.diary.dto.request.DiaryCreateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
-import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsAndAnswersResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsResponse;
 import com.greeenai.greeenai.domain.diary.service.DiaryService;
 import jakarta.validation.Valid;
@@ -46,9 +45,9 @@ public class DiaryController {
     }
 
     @PutMapping("/{diaryId}/generate-image")
-    public ResponseEntity<DiaryWithQuestionsAndAnswersResponse> generateImageWithAnswers(
+    public ResponseEntity<DiaryResponse> generateImageWithAnswers(
             @PathVariable Long diaryId, @Valid @RequestBody List<QuestionAnswerRequest> requests) {
-        DiaryWithQuestionsAndAnswersResponse response = diaryService.answerDiaryQuestions(diaryId, requests);
+        DiaryResponse response = diaryService.answerDiaryQuestions(diaryId, requests);
         return ResponseEntity.ok(response);
     }
 

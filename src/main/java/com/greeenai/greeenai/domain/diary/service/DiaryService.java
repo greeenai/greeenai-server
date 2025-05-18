@@ -79,18 +79,11 @@ public class DiaryService {
     }
 
     @Transactional
-    public DiaryWithQuestionsAndAnswersResponse answerDiaryQuestions(
-            Long diaryId, List<QuestionAnswerRequest> requests) {
-        requests.forEach(request -> {
-            Option option = optionRepository
-                    .findById(request.optionId())
-                    .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
-            option.markAsAnswer();
-        });
+    public DiaryResponse answerDiaryQuestions(Long diaryId, List<QuestionAnswerRequest> requests) {
         // TODO : AI에게 질문 답변 묶음 보내주기
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         log.info("[DiaryService] 질문 답변 성공 : diaryId={}", diaryId);
-        return DiaryWithQuestionsAndAnswersResponse.of(diary, getDiaryImageUrl(diary));
+        return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
 
     @Transactional
@@ -140,9 +133,7 @@ public class DiaryService {
                         question.caption(),
                         question.prompt(),
                         diary,
-                        question.options().stream()
-                                .map(option -> Option.create(option, false))
-                                .toList()))
+                        question.options().stream().map(Option::create).toList()))
                 .toList();
     }
 }

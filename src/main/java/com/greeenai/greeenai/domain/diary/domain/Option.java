@@ -19,19 +19,12 @@ public class Option extends BaseEntity {
 
     private String content;
 
-    private boolean isAnswer;
-
     @Builder(access = AccessLevel.PRIVATE)
-    private Option(String content, boolean isAnswer) {
+    private Option(String content) {
         this.content = content;
-        this.isAnswer = isAnswer;
     }
 
-    public static Option create(String content, boolean isAnswer) {
-        return Option.builder().content(content).isAnswer(isAnswer).build();
-    }
-
-    public void markAsAnswer() {
-        this.isAnswer = true;
+    public static Option create(String content) {
+        return Option.builder().content(content).build();
     }
 }
