@@ -2,13 +2,14 @@ package com.greeenai.greeenai.domain.ai.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateDiaryRequest;
-import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateImagesRequest;
-import com.greeenai.greeenai.domain.ai.dto.request.AIGenerateQuestionsRequest;
-import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateDiaryResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateImagesResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.AIGenerateQuestionsResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.AIQuestionResponse;
+import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest;
+import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest.DiaryEntry;
+import com.greeenai.greeenai.domain.ai.dto.request.GenerateImagesRequest;
+import com.greeenai.greeenai.domain.ai.dto.request.GenerateQuestionsRequest;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateDiaryResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateImagesResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,15 @@ public class AIClient {
 
     private final WebClient webClient;
 
-    public List<AIQuestionResponse> generateQuestions(List<String> imageUrls) {
-        AIGenerateQuestionsRequest request = AIGenerateQuestionsRequest.from(imageUrls);
+    public List<GeneratedQuestion> generateQuestions(List<String> imageUrls) {
+        GenerateQuestionsRequest request = GenerateQuestionsRequest.from(imageUrls);
 
-        AIGenerateQuestionsResponse response = webClient
+        GenerateQuestionsResponse response = webClient
                 .post()
                 .uri("/generate-questions")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(AIGenerateQuestionsResponse.class)
+                .bodyToMono(GenerateQuestionsResponse.class)
                 .block();
 
         if (response == null || response.questions() == null) {
@@ -40,14 +41,14 @@ public class AIClient {
     }
 
     public List<String> generateImages(List<String> imageUrls, List<String> captions) {
-        AIGenerateImagesRequest request = AIGenerateImagesRequest.of(imageUrls, captions);
+        GenerateImagesRequest request = GenerateImagesRequest.of(imageUrls, captions);
 
-        AIGenerateImagesResponse response = webClient
+        GenerateImagesResponse response = webClient
                 .post()
                 .uri("/generate")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(AIGenerateImagesResponse.class)
+                .bodyToMono(GenerateImagesResponse.class)
                 .block();
 
         if (response == null) {
@@ -57,15 +58,15 @@ public class AIClient {
         return response.generatedUrls();
     }
 
-    public String generateDiary(List<AIGenerateDiaryRequest.DiaryEntry> entries) {
-        AIGenerateDiaryRequest request = AIGenerateDiaryRequest.of(entries);
+    public String generateDiary(List<DiaryEntry> entries) {
+        GenerateDiaryRequest request = GenerateDiaryRequest.of(entries);
 
-        AIGenerateDiaryResponse response = webClient
+        GenerateDiaryResponse response = webClient
                 .post()
                 .uri("/generate-diary")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(AIGenerateDiaryResponse.class)
+                .bodyToMono(GenerateDiaryResponse.class)
                 .block();
 
         if (response == null || response.diary() == null) {

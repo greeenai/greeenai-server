@@ -2,7 +2,7 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.domain.ai.dto.response.AIQuestionResponse;
+import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
 import com.greeenai.greeenai.domain.ai.service.AIClient;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.Option;
@@ -70,8 +70,8 @@ public class DiaryService {
 
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
-        List<AIQuestionResponse> aiQuestionResponses = aiClient.generateQuestions(userImageUrls);
-        List<Question> questions = createQuestions(aiQuestionResponses, diary);
+        List<GeneratedQuestion> generatedQuestions = aiClient.generateQuestions(userImageUrls);
+        List<Question> questions = createQuestions(generatedQuestions, diary);
         questionRepository.saveAll(questions);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
@@ -133,15 +133,15 @@ public class DiaryService {
                 .toList();
     }
 
-    private List<Question> createQuestions(List<AIQuestionResponse> aiQuestionResponses, Diary diary) {
-        return aiQuestionResponses.stream()
-                .map(qr -> Question.create(
-                        qr.title(),
-                        qr.caption(),
-                        qr.prompt(),
+    private List<Question> createQuestions(List<GeneratedQuestion> generatedQuestions, Diary diary) {
+        return generatedQuestions.stream()
+                .map(question -> Question.create(
+                        question.title(),
+                        question.caption(),
+                        question.prompt(),
                         diary,
-                        qr.options().stream()
-                                .map(content -> Option.create(content, false))
+                        question.options().stream()
+                                .map(option -> Option.create(option, false))
                                 .toList()))
                 .toList();
     }
