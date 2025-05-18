@@ -21,13 +21,8 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -35,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DiaryService {
 
+    private final AIClient aiClient;
     private final ImageService imageService;
     private final DiaryRepository diaryRepository;
     private final QuestionRepository questionRepository;
@@ -72,7 +68,7 @@ public class DiaryService {
 
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
-        List<AIQuestionResponse> aiQuestionResponses = generateQuestionsFromAI(userImageUrls);
+        List<AIQuestionResponse> aiQuestionResponses = aiClient.generateQuestions(userImageUrls);
         List<Question> questions = createQuestions(aiQuestionResponses, diary);
         questionRepository.saveAll(questions);
 
@@ -146,22 +142,5 @@ public class DiaryService {
                                 .map(content -> Option.create(content, false))
                                 .toList()))
                 .toList();
-    }
-
-    private List<AIQuestionResponse> generateQuestionsFromAI(List<String> imageUrls) {
-        AIGenerateQuestionsRequest aiRequest = AIGenerateQuestionsRequest.from(imageUrls);
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<AIGenerateQuestionsRequest> entity = new HttpEntity<>(aiRequest, headers);
-
-        ResponseEntity<AIGenerateQuestionsResponse> aiResponse = restTemplate.postForEntity(
-                "https://kaggom.online/generate-questions", // TODO: 유효한 URL로 변경
-                entity,
-                AIGenerateQuestionsResponse.class);
-
-        return aiResponse.getBody().questions();
     }
 }
