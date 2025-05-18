@@ -1,7 +1,7 @@
 package com.greeenai.greeenai.domain.diary.domain;
 
 public enum DiaryStatus {
-	IN_PROGRESS,
-	COMPLETED,
-	;
+    IN_PROGRESS,
+    COMPLETED,
+    ;
 }

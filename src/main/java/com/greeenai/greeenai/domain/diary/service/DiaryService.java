@@ -13,7 +13,6 @@ import com.greeenai.greeenai.domain.diary.domain.Question;
 import com.greeenai.greeenai.domain.diary.dto.request.*;
 import com.greeenai.greeenai.domain.diary.dto.response.*;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
-import com.greeenai.greeenai.domain.diary.repository.OptionRepository;
 import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
 import com.greeenai.greeenai.domain.image.domain.Image;
 import com.greeenai.greeenai.domain.image.domain.ImageType;
@@ -43,7 +42,8 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
-        Diary diary = diaryRepository.findById(diaryId)
+        Diary diary = diaryRepository
+                .findById(diaryId)
                 .filter(d -> d.getStatus() == DiaryStatus.COMPLETED)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
