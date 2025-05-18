@@ -2,6 +2,8 @@ package com.greeenai.greeenai.global.security;
 
 import static com.greeenai.greeenai.global.common.constant.SecurityConstants.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.greeenai.greeenai.domain.auth.dto.LoginResponse;
 import com.greeenai.greeenai.global.common.constant.UrlConstants;
 import com.greeenai.greeenai.global.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,7 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             Long memberId = jwtService.parseToken(REFRESH_TOKEN, refreshToken);
             String newAccessToken = jwtService.generateToken(ACCESS_TOKEN, memberId);
-            jwtUtil.addTokenToHeader(response, ACCESS_TOKEN, newAccessToken);
+            LoginResponse loginResponse = new LoginResponse(newAccessToken, null);
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
+
             setAuthenticationToContext(PrincipalDetails.from(memberId));
         }
 
