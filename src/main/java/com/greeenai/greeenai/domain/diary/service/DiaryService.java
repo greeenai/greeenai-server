@@ -69,7 +69,7 @@ public class DiaryService {
     public DiaryWithQuestionsResponse createDiary(DiaryCreateRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
         List<Image> userImages = saveUserImages(request.getPhotos());
-        Diary diary = Diary.create(null, request.getEntryDate(), currentMember, userImages);
+        Diary diary = Diary.create(request.getEntryDate(), currentMember, userImages);
         diaryRepository.save(diary);
 
         List<String> userImageUrls =

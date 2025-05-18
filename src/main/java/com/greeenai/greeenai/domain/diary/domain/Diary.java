@@ -19,6 +19,7 @@ public class Diary extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private String content;
 
     @Column(nullable = false)
@@ -41,16 +42,14 @@ public class Diary extends BaseEntity {
     private List<Question> questions = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Diary(String content, LocalDate entryDate, Member member, List<Image> userImages) {
-        this.content = content;
+    private Diary(LocalDate entryDate, Member member, List<Image> userImages) {
         this.entryDate = entryDate;
         this.member = member;
         this.userImages = userImages;
     }
 
-    public static Diary create(String content, LocalDate entryDate, Member member, List<Image> userImages) {
+    public static Diary create(LocalDate entryDate, Member member, List<Image> userImages) {
         return Diary.builder()
-                .content(content)
                 .entryDate(entryDate)
                 .member(member)
                 .userImages(userImages)
