@@ -47,15 +47,15 @@ public class DiaryService {
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
 
-	@Transactional(readOnly = true)
-	public List<DiaryResponse> findAllMyDiaries(@Nullable LocalDate entryDate) {
-		Member currentMember = memberUtil.getCurrentMember();
-		List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
+    @Transactional(readOnly = true)
+    public List<DiaryResponse> findAllMyDiaries(@Nullable LocalDate entryDate) {
+        Member currentMember = memberUtil.getCurrentMember();
+        List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
 
-		return myDiaries.stream()
-				.map(diary -> DiaryResponse.of(diary, getDiaryImageUrl(diary)))
-				.toList();
-	}
+        return myDiaries.stream()
+                .map(diary -> DiaryResponse.of(diary, getDiaryImageUrl(diary)))
+                .toList();
+    }
 
     @Transactional(readOnly = true)
     public String getDownloadUrlByDiaryId(Long diaryId) {
@@ -72,8 +72,8 @@ public class DiaryService {
 
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
-        List<QuestionResponse> questionResponses = generateQuestionsFromAI(userImageUrls);
-        List<Question> questions = createQuestions(questionResponses, diary);
+        List<AIQuestionResponse> aiQuestionResponses = generateQuestionsFromAI(userImageUrls);
+        List<Question> questions = createQuestions(aiQuestionResponses, diary);
         questionRepository.saveAll(questions);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
@@ -135,32 +135,32 @@ public class DiaryService {
                 .toList();
     }
 
-    private List<Question> createQuestions(List<QuestionResponse> questionResponses, Diary diary) {
-        return questionResponses.stream()
+    private List<Question> createQuestions(List<AIQuestionResponse> aiQuestionResponses, Diary diary) {
+        return aiQuestionResponses.stream()
                 .map(qr -> Question.create(
                         qr.title(),
                         qr.caption(),
                         qr.prompt(),
                         diary,
                         qr.options().stream()
-                                .map(opt -> Option.create(opt.content(), false))
+                                .map(content -> Option.create(content, false))
                                 .toList()))
                 .toList();
     }
 
-    private List<QuestionResponse> generateQuestionsFromAI(List<String> imageUrls) {
-        GenerateQuestionsRequest aiRequest = GenerateQuestionsRequest.from(imageUrls);
+    private List<AIQuestionResponse> generateQuestionsFromAI(List<String> imageUrls) {
+        AIGenerateQuestionsRequest aiRequest = AIGenerateQuestionsRequest.from(imageUrls);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<GenerateQuestionsRequest> entity = new HttpEntity<>(aiRequest, headers);
+        HttpEntity<AIGenerateQuestionsRequest> entity = new HttpEntity<>(aiRequest, headers);
 
-        ResponseEntity<GenerateQuestionsResponse> aiResponse = restTemplate.postForEntity(
+        ResponseEntity<AIGenerateQuestionsResponse> aiResponse = restTemplate.postForEntity(
                 "https://kaggom.online/generate-questions", // TODO: 유효한 URL로 변경
                 entity,
-                GenerateQuestionsResponse.class);
+                AIGenerateQuestionsResponse.class);
 
         return aiResponse.getBody().questions();
     }
