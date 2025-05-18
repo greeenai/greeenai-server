@@ -38,26 +38,16 @@ public class ImageService {
     public Image uploadImage(MultipartFile multipartFile, ImageType imageType, Long targetId) {
         validateMultipartFile(multipartFile);
 
-        ContentType contentType = ContentType.from(multipartFile.getContentType());
-
-        String imageKey = ImageKeyGenerator.generate();
-        Image image = Image.create(imageType, targetId, imageKey, contentType);
-        Image savedImage = imageRepository.save(image);
-
         try {
-            PutObjectRequest request = getPutObjectRequest(savedImage);
-            RequestBody rb = getFileRequestBody(multipartFile);
-            s3Client.putObject(request, rb);
-
-            return savedImage;
-
-        } catch (S3Exception e) {
-            imageRepository.delete(savedImage);
-            throw new CustomException(S3_UPLOAD_FAILED);
+            return saveImage(multipartFile.getBytes(), multipartFile.getContentType(), imageType, targetId);
         } catch (IOException e) {
-            imageRepository.delete(savedImage);
             throw new CustomException(FILE_READ_FAILED);
         }
+    }
+
+    @Transactional
+    public Image uploadImage(byte[] imageBytes, String contentType, ImageType imageType, Long targetId) {
+        return saveImage(imageBytes, contentType, imageType, targetId);
     }
 
     @Transactional(readOnly = true)
@@ -82,21 +72,34 @@ public class ImageService {
         return CloudFrontUrlGenerator.generateUrlByFileName(image.generateFileName());
     }
 
+    private void validateMultipartFile(MultipartFile multipartFile) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new CustomException(MULTIPART_FILE_INVALID);
+        }
+    }
+
+    private Image saveImage(byte[] imageBytes, String contentType, ImageType imageType, Long targetId) {
+        ContentType ct = ContentType.from(contentType);
+        String imageKey = ImageKeyGenerator.generate();
+
+        Image image = Image.create(imageType, targetId, imageKey, ct);
+        Image savedImage = imageRepository.save(image);
+
+        try {
+            PutObjectRequest request = getPutObjectRequest(savedImage);
+            s3Client.putObject(request, RequestBody.fromBytes(imageBytes));
+            return savedImage;
+        } catch (S3Exception e) {
+            imageRepository.delete(savedImage);
+            throw new CustomException(S3_UPLOAD_FAILED);
+        }
+    }
+
     private PutObjectRequest getPutObjectRequest(Image image) {
         return PutObjectRequest.builder()
                 .bucket(s3Properties.getS3().bucket())
                 .key(image.generateFileName())
                 .contentType(image.getContentType().getValue())
                 .build();
-    }
-
-    private RequestBody getFileRequestBody(MultipartFile file) throws IOException {
-        return RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-    }
-
-    private void validateMultipartFile(MultipartFile multipartFile) {
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            throw new CustomException(MULTIPART_FILE_INVALID);
-        }
     }
 }

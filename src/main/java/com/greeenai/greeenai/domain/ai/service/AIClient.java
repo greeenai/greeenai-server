@@ -7,12 +7,15 @@ import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest;
 import com.greeenai.greeenai.domain.ai.dto.request.GenerateImageRequest;
 import com.greeenai.greeenai.domain.ai.dto.request.GenerateQuestionsRequest;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateDiaryResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.GenerateImageResponse;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse;
 import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
+import com.greeenai.greeenai.domain.ai.dto.response.GeneratedImage;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -40,22 +43,27 @@ public class AIClient {
         return response.questions();
     }
 
-    public List<String> generateImages(List<DiaryEntry> entries) {
+    public GeneratedImage generateImage(List<DiaryEntry> entries) {
         GenerateImageRequest request = GenerateImageRequest.of(entries);
 
-        GenerateImageResponse response = webClient
+        ResponseEntity<byte[]> response = webClient
                 .post()
                 .uri("/generate-image")
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(GenerateImageResponse.class)
+                .toEntity(byte[].class)
                 .block();
 
-        if (response == null) {
+        if (response == null || response.getBody() == null) {
             throw new CustomException(AI_IMAGE_GENERATION_FAILED);
         }
 
-        return response.generatedUrls();
+        return GeneratedImage.of(
+                response.getBody(),
+                Optional.ofNullable(response.getHeaders().getContentType())
+                        .map(MediaType::toString)
+                        .orElse("image/png"));
     }
 
     public String generateDiary(List<DiaryEntry> entries) {
