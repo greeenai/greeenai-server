@@ -73,13 +73,13 @@ public class DiaryService {
         Member currentMember = memberUtil.getCurrentMember();
         List<Image> userImages = saveUserImages(request.getPhotos());
         Diary diary = Diary.create(request.getEntryDate(), currentMember, userImages);
-        diaryRepository.save(diary);
 
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
         List<GeneratedQuestion> generatedQuestions = aiClient.generateQuestions(userImageUrls);
-        List<Question> questions = createQuestions(generatedQuestions, diary);
-        questionRepository.saveAll(questions);
+        List<Question> questions = createQuestions(generatedQuestions);
+        diary.addQuestions(questions);
+        diaryRepository.save(diary);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
         return DiaryWithQuestionsResponse.from(diary);
@@ -146,13 +146,12 @@ public class DiaryService {
                 generatedImage.bytes(), generatedImage.contentType(), ImageType.DIARY, diary.getId());
     }
 
-    private List<Question> createQuestions(List<GeneratedQuestion> generatedQuestions, Diary diary) {
+    private List<Question> createQuestions(List<GeneratedQuestion> generatedQuestions) {
         return generatedQuestions.stream()
                 .map(question -> Question.create(
                         question.title(),
                         question.caption(),
                         question.prompt(),
-                        diary,
                         question.options().stream().map(Option::create).toList()))
                 .toList();
     }

@@ -42,7 +42,8 @@ public class Diary extends BaseEntity {
     @JoinColumn(name = "diary_id")
     private List<Image> userImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "diary_id")
     private List<Question> questions = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
@@ -59,6 +60,10 @@ public class Diary extends BaseEntity {
                 .member(member)
                 .userImages(userImages)
                 .build();
+    }
+
+    public void addQuestions(List<Question> questions) {
+        this.questions.addAll(questions);
     }
 
     public void updateEntryDate(LocalDate entryDate) {
