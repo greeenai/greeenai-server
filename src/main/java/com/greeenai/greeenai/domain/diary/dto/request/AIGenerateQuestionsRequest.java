@@ -1,7 +1,6 @@
 package com.greeenai.greeenai.domain.diary.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public record AIGenerateQuestionsRequest(@JsonProperty("image_urls") List<String> imageUrls) {
