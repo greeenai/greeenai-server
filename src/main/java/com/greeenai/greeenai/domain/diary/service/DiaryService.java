@@ -75,7 +75,7 @@ public class DiaryService {
         questionRepository.saveAll(questions);
 
         log.info("[DiaryService] 일기 생성 성공 : diaryId={}", diary.getId());
-        return DiaryWithQuestionsResponse.of(diary, getDiaryImageUrl(diary));
+        return DiaryWithQuestionsResponse.from(diary);
     }
 
     @Transactional
