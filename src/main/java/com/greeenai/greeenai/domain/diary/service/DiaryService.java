@@ -56,9 +56,11 @@ public class DiaryService {
     }
 
     @Transactional(readOnly = true)
-    public String getDownloadUrlByDiaryId(Long diaryId) {
+    public DownloadUrlResponse getDownloadUrlByDiaryId(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
-        return imageService.generateImageDownloadUrl(diary.getImage().getId());
+        String downloadUrl =
+                imageService.generateImageDownloadUrl(diary.getImage().getId());
+        return DownloadUrlResponse.from(downloadUrl);
     }
 
     @Transactional

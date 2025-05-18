@@ -5,6 +5,7 @@ import com.greeenai.greeenai.domain.diary.dto.request.DiaryUpdateRequest;
 import com.greeenai.greeenai.domain.diary.dto.request.QuestionAnswerRequest;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryResponse;
 import com.greeenai.greeenai.domain.diary.dto.response.DiaryWithQuestionsResponse;
+import com.greeenai.greeenai.domain.diary.dto.response.DownloadUrlResponse;
 import com.greeenai.greeenai.domain.diary.service.DiaryService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -39,9 +40,9 @@ public class DiaryController {
     }
 
     @GetMapping("/{diaryId}/download-url")
-    public ResponseEntity<String> getDiaryDownloadUrl(@PathVariable Long diaryId) {
-        String downloadUrl = diaryService.getDownloadUrlByDiaryId(diaryId);
-        return ResponseEntity.ok(downloadUrl);
+    public ResponseEntity<DownloadUrlResponse> getDiaryDownloadUrl(@PathVariable Long diaryId) {
+        DownloadUrlResponse response = diaryService.getDownloadUrlByDiaryId(diaryId);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{diaryId}/generate-image")
