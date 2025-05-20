@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ImageType {
     DIARY("diary"),
+    USER("user"),
     ;
 
     private final String value;

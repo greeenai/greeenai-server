@@ -15,6 +15,7 @@ public enum ErrorCode {
     QUERY_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "올바르지 않은 쿼리 타입 입니다."),
     QUERY_PARAM_INVALID(HttpStatus.BAD_REQUEST, "올바르지 않은 쿼리 파라미터 값입니다."),
     QUERY_PARAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "쿼리 파라미터가 존재하지 않습니다."),
+    MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "업로드 용량 제한을 초과했습니다. 파일 크기를 확인해주세요."),
 
     // Token
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
@@ -33,11 +34,19 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지입니다."),
     CONTENT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일 유형입니다."),
     MULTIPART_FILE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 파일입니다."),
+    S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에 실패했습니다."),
+    FILE_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 읽기에 실패했습니다."),
 
     // Diary
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일기입니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
+    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 옵션입니다."),
     DIARY_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "일기 소유자와 현재 사용자가 다릅니다."),
+
+    // AI
+    AI_QUESTION_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 질문 생성에 실패했습니다."),
+    AI_IMAGE_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 이미지 생성에 실패했습니다."),
+    AI_DIARY_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI 일기 생성에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;
