@@ -90,7 +90,6 @@ public class ImageService {
             s3Client.putObject(request, RequestBody.fromBytes(imageBytes));
             return savedImage;
         } catch (S3Exception e) {
-            imageRepository.delete(savedImage);
             throw new CustomException(S3_UPLOAD_FAILED);
         }
     }
