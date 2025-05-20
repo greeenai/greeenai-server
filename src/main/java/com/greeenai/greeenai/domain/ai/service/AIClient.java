@@ -49,12 +49,7 @@ public class AIClient {
             }
 
             if (attempt < maxAttempts) {
-                try {
-                    Thread.sleep(1000); // 다음 시도까지 대기
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new CustomException(AI_QUESTION_GENERATION_FAILED);
-                }
+                waitBeforeRetry();
             }
         }
 
@@ -120,5 +115,14 @@ public class AIClient {
         }
 
         return true;
+    }
+
+    private void waitBeforeRetry() {
+        try {
+            Thread.sleep(1000); // 1초 대기
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 인터럽트 상태 복원
+            throw new CustomException(AI_QUESTION_GENERATION_FAILED);
+        }
     }
 }
