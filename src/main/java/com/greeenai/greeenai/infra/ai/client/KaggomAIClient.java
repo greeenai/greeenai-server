@@ -1,5 +1,6 @@
 package com.greeenai.greeenai.infra.ai.client;
 
+import static com.greeenai.greeenai.global.common.constant.AiApiUriConstants.*;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 import com.greeenai.greeenai.global.error.exception.CustomException;
@@ -29,7 +30,7 @@ public class KaggomAIClient {
             try {
                 response = kaggomWebClient
                         .post()
-                        .uri("/generate-question")
+                        .uri(GENERATE_QUESTIONS)
                         .bodyValue(request)
                         .retrieve()
                         .bodyToMono(GenerateQuestionsResponse.class)
@@ -55,7 +56,7 @@ public class KaggomAIClient {
 
         GenerateDiaryResponse response = kaggomWebClient
                 .post()
-                .uri("/generate-diary")
+                .uri(GENERATE_DIARY)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(GenerateDiaryResponse.class)

@@ -1,5 +1,6 @@
 package com.greeenai.greeenai.infra.ai.client;
 
+import static com.greeenai.greeenai.global.common.constant.AiApiUriConstants.*;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 import com.greeenai.greeenai.global.error.exception.CustomException;
@@ -25,7 +26,7 @@ public class ImageAIClient {
 
         ResponseEntity<byte[]> response = aiWebClient
                 .post()
-                .uri("/generate-image")
+                .uri(GENERATE_IMAGE)
                 .bodyValue(request)
                 .retrieve()
                 .toEntity(byte[].class)
