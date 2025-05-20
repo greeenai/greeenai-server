@@ -2,10 +2,6 @@ package com.greeenai.greeenai.domain.diary.service;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.infra.ai.dto.request.DiaryEntry;
-import com.greeenai.greeenai.infra.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
-import com.greeenai.greeenai.infra.ai.dto.response.GeneratedImage;
-import com.greeenai.greeenai.infra.ai.client.AIClient;
 import com.greeenai.greeenai.domain.diary.domain.Diary;
 import com.greeenai.greeenai.domain.diary.domain.DiaryStatus;
 import com.greeenai.greeenai.domain.diary.domain.Option;
@@ -20,6 +16,11 @@ import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import com.greeenai.greeenai.global.util.MemberUtil;
+import com.greeenai.greeenai.infra.ai.client.ImageAIClient;
+import com.greeenai.greeenai.infra.ai.client.KaggomAIClient;
+import com.greeenai.greeenai.infra.ai.dto.request.DiaryEntry;
+import com.greeenai.greeenai.infra.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
+import com.greeenai.greeenai.infra.ai.dto.response.GeneratedImage;
 import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DiaryService {
 
-    private final AIClient aiClient;
+    private final KaggomAIClient kaggomAiClient;
+    private final ImageAIClient imageAiClient;
     private final ImageService imageService;
     private final DiaryRepository diaryRepository;
     private final QuestionRepository questionRepository;
@@ -77,7 +79,7 @@ public class DiaryService {
 
         List<String> userImageUrls =
                 userImages.stream().map(imageService::getUrl).toList();
-        List<GeneratedQuestion> generatedQuestions = aiClient.generateQuestions(userImageUrls);
+        List<GeneratedQuestion> generatedQuestions = kaggomAiClient.generateQuestions(userImageUrls);
         List<Question> questions = createQuestions(generatedQuestions);
         questionRepository.saveAll(questions);
         diary.addQuestions(questions);
@@ -89,8 +91,8 @@ public class DiaryService {
     @Transactional
     public DiaryResponse answerDiaryQuestions(Long diaryId, List<QuestionAnswerRequest> requests) {
         List<DiaryEntry> entries = toDiaryEntries(requests);
-        GeneratedImage generatedImage = aiClient.generateImage(entries);
-        String diaryContent = aiClient.generateDiary(entries);
+        GeneratedImage generatedImage = imageAiClient.generateImage(entries);
+        String diaryContent = kaggomAiClient.generateDiary(entries);
 
         Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
         Image diaryImage = saveDiaryImage(diary, generatedImage);
