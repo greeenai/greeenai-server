@@ -9,6 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "custom.webclient")
 public class WebClientProperties {
 
-	private final String kaggomBaseUrl;
-	private final String aiBaseUrl;
+    private final String kaggomBaseUrl;
+    private final String aiBaseUrl;
 }

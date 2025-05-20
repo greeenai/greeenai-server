@@ -1,15 +1,15 @@
 package com.greeenai.greeenai.global.config;
 
+import static com.greeenai.greeenai.global.common.constant.WebClientConstants.*;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.MediaType.*;
+
 import com.greeenai.greeenai.global.property.WebClientProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import static com.greeenai.greeenai.global.common.constant.WebClientConstants.*;
-import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
 @Configuration
