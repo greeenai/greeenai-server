@@ -1,9 +1,10 @@
 package com.greeenai.greeenai.domain.diary.service;
 
+import static com.greeenai.greeenai.domain.diary.domain.DiaryStatus.*;
+import static com.greeenai.greeenai.domain.image.domain.ImageType.*;
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
 import com.greeenai.greeenai.domain.diary.domain.Diary;
-import com.greeenai.greeenai.domain.diary.domain.DiaryStatus;
 import com.greeenai.greeenai.domain.diary.domain.Option;
 import com.greeenai.greeenai.domain.diary.domain.Question;
 import com.greeenai.greeenai.domain.diary.dto.request.*;
@@ -11,7 +12,6 @@ import com.greeenai.greeenai.domain.diary.dto.response.*;
 import com.greeenai.greeenai.domain.diary.repository.DiaryRepository;
 import com.greeenai.greeenai.domain.diary.repository.QuestionRepository;
 import com.greeenai.greeenai.domain.image.domain.Image;
-import com.greeenai.greeenai.domain.image.domain.ImageType;
 import com.greeenai.greeenai.domain.image.service.ImageService;
 import com.greeenai.greeenai.domain.member.domain.Member;
 import com.greeenai.greeenai.global.error.exception.CustomException;
@@ -45,7 +45,7 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository
-                .findByIdAndStatus(diaryId, DiaryStatus.COMPLETED)
+                .findByIdAndStatus(diaryId, COMPLETED)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
@@ -57,7 +57,7 @@ public class DiaryService {
         List<Diary> myDiaries = diaryRepository.findAllByMemberAndEntryDate(currentMember, entryDate);
 
         return myDiaries.stream()
-                .filter(diary -> diary.getStatus() == DiaryStatus.COMPLETED)
+                .filter(diary -> diary.getStatus() == COMPLETED)
                 .map(diary -> DiaryResponse.of(diary, getDiaryImageUrl(diary)))
                 .toList();
     }
@@ -140,13 +140,12 @@ public class DiaryService {
     private List<Image> saveUserImages(List<MultipartFile> userImages) {
         Member currentMember = memberUtil.getCurrentMember();
         return userImages.stream()
-                .map(userImage -> imageService.uploadImage(userImage, ImageType.USER, currentMember.getId()))
+                .map(userImage -> imageService.uploadImage(userImage, USER, currentMember.getId()))
                 .toList();
     }
 
     private Image saveDiaryImage(Diary diary, GeneratedImage generatedImage) {
-        return imageService.uploadImage(
-                generatedImage.bytes(), generatedImage.contentType(), ImageType.DIARY, diary.getId());
+        return imageService.uploadImage(generatedImage.bytes(), generatedImage.contentType(), DIARY, diary.getId());
     }
 
     private List<Question> createQuestions(List<GeneratedQuestion> generatedQuestions) {
