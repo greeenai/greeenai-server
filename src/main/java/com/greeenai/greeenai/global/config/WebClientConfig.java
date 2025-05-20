@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import static com.greeenai.greeenai.global.common.constant.WebClientConstants.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 
@@ -28,7 +29,7 @@ public class WebClientConfig {
         return builder.baseUrl(webClientProperties.getAiBaseUrl())
                 .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(config -> config.defaultCodecs().maxInMemorySize(10 * 1024 * 1024)) // 10MB로 확장
+                        .codecs(config -> config.defaultCodecs().maxInMemorySize(MAX_RESPONSE_BODY_SIZE))
                         .build())
                 .build();
     }
