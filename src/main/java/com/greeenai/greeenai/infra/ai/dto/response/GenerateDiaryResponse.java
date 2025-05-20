@@ -1,3 +1,3 @@
-package com.greeenai.greeenai.domain.ai.dto.response;
+package com.greeenai.greeenai.infra.ai.dto.response;
 
 public record GenerateDiaryResponse(String diary) {}

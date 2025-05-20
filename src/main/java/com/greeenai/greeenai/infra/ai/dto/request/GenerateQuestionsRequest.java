@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.domain.ai.dto.request;
+package com.greeenai.greeenai.infra.ai.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

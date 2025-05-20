@@ -1,4 +1,4 @@
-package com.greeenai.greeenai.domain.ai.dto.response;
+package com.greeenai.greeenai.infra.ai.dto.response;
 
 import java.util.List;
 

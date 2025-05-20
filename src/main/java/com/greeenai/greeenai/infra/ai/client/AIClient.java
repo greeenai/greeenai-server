@@ -1,15 +1,15 @@
-package com.greeenai.greeenai.domain.ai.service;
+package com.greeenai.greeenai.infra.ai.client;
 
 import static com.greeenai.greeenai.global.error.exception.ErrorCode.*;
 
-import com.greeenai.greeenai.domain.ai.dto.request.DiaryEntry;
-import com.greeenai.greeenai.domain.ai.dto.request.GenerateDiaryRequest;
-import com.greeenai.greeenai.domain.ai.dto.request.GenerateImageRequest;
-import com.greeenai.greeenai.domain.ai.dto.request.GenerateQuestionsRequest;
-import com.greeenai.greeenai.domain.ai.dto.response.GenerateDiaryResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse;
-import com.greeenai.greeenai.domain.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
-import com.greeenai.greeenai.domain.ai.dto.response.GeneratedImage;
+import com.greeenai.greeenai.infra.ai.dto.request.DiaryEntry;
+import com.greeenai.greeenai.infra.ai.dto.request.GenerateDiaryRequest;
+import com.greeenai.greeenai.infra.ai.dto.request.GenerateImageRequest;
+import com.greeenai.greeenai.infra.ai.dto.request.GenerateQuestionsRequest;
+import com.greeenai.greeenai.infra.ai.dto.response.GenerateDiaryResponse;
+import com.greeenai.greeenai.infra.ai.dto.response.GenerateQuestionsResponse;
+import com.greeenai.greeenai.infra.ai.dto.response.GenerateQuestionsResponse.GeneratedQuestion;
+import com.greeenai.greeenai.infra.ai.dto.response.GeneratedImage;
 import com.greeenai.greeenai.global.error.exception.CustomException;
 import java.util.List;
 import java.util.Optional;
