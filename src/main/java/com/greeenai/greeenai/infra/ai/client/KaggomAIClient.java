@@ -39,12 +39,12 @@ public class KaggomAIClient {
                 throw new CustomException(AI_QUESTION_GENERATION_FAILED); // 예외는 즉시 중단
             }
 
-            if (isValidQuestionsResponse(response)) {
-                return response.questions(); // 유효 응답
-            }
-
-            if (attempt < maxAttempts) {
-                waitBeforeRetry();
+            try {
+                validateQuestionsResponse(response);
+                return response.questions(); // 유효하면 반환
+            } catch (CustomException e) {
+                if (attempt >= maxAttempts) throw e;
+                waitBeforeRetry(); // 다음 시도를 위해 대기
             }
         }
 
@@ -62,32 +62,28 @@ public class KaggomAIClient {
                 .bodyToMono(GenerateDiaryResponse.class)
                 .block();
 
-        if (response == null || response.diary() == null) {
-            throw new CustomException(AI_DIARY_GENERATION_FAILED);
-        }
+        validateDiaryResponse(response);
 
         return response.diary();
     }
 
-    private boolean isValidQuestionsResponse(GenerateQuestionsResponse response) {
+    private void validateQuestionsResponse(GenerateQuestionsResponse response) {
         if (response == null
                 || response.questions() == null
                 || response.questions().isEmpty()) {
-            return false;
+            throw new CustomException(AI_QUESTION_GENERATION_FAILED);
         }
 
-        for (GenerateQuestionsResponse.GeneratedQuestion q : response.questions()) {
+        for (GeneratedQuestion q : response.questions()) {
             if (q == null
                     || q.title() == null
                     || q.caption() == null
                     || q.prompt() == null
                     || q.options() == null
                     || q.options().isEmpty()) {
-                return false;
+                throw new CustomException(AI_QUESTION_GENERATION_FAILED);
             }
         }
-
-        return true;
     }
 
     private void waitBeforeRetry() {
@@ -96,6 +92,12 @@ public class KaggomAIClient {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // 인터럽트 상태 복원
             throw new CustomException(AI_QUESTION_GENERATION_FAILED);
+        }
+    }
+
+    private void validateDiaryResponse(GenerateDiaryResponse response) {
+        if (response == null || response.diary() == null) {
+            throw new CustomException(AI_DIARY_GENERATION_FAILED);
         }
     }
 }

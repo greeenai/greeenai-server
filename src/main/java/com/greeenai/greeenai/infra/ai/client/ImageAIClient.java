@@ -32,14 +32,18 @@ public class ImageAIClient {
                 .toEntity(byte[].class)
                 .block();
 
-        if (response == null || response.getBody() == null) {
-            throw new CustomException(AI_IMAGE_GENERATION_FAILED);
-        }
+        validateImageResponse(response);
 
         return GeneratedImage.of(
                 response.getBody(),
                 Optional.ofNullable(response.getHeaders().getContentType())
                         .map(MediaType::toString)
                         .orElse("image/png"));
+    }
+
+    private void validateImageResponse(ResponseEntity<byte[]> response) {
+        if (response == null || response.getBody() == null) {
+            throw new CustomException(AI_IMAGE_GENERATION_FAILED);
+        }
     }
 }
