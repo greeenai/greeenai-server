@@ -64,7 +64,7 @@ public class KaggomAIClient {
 
         validateDiaryResponse(response);
 
-        return response.diary();
+        return response.diaryContent();
     }
 
     private void validateQuestionsResponse(GenerateQuestionsResponse response) {
@@ -96,7 +96,7 @@ public class KaggomAIClient {
     }
 
     private void validateDiaryResponse(GenerateDiaryResponse response) {
-        if (response == null || response.diary() == null) {
+        if (response == null || response.diaryContent() == null) {
             throw new CustomException(AI_DIARY_GENERATION_FAILED);
         }
     }

@@ -1,3 +1,5 @@
 package com.greeenai.greeenai.infra.ai.dto.response;
 
-public record GenerateDiaryResponse(String diary) {}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record GenerateDiaryResponse(@JsonProperty("diary") String diaryContent) {}
