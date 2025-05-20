@@ -45,9 +45,9 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long diaryId) {
         Diary diary = diaryRepository
-                .findById(diaryId)
-                .filter(d -> d.getStatus() == DiaryStatus.COMPLETED)
+                .findByIdAndStatus(diaryId, DiaryStatus.COMPLETED)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
         return DiaryResponse.of(diary, getDiaryImageUrl(diary));
     }
 
