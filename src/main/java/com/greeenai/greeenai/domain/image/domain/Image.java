@@ -17,6 +17,7 @@ public class Image extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 10)
     private ImageType imageType;
 
     private Long targetId;
