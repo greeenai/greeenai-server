@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 public enum ContentType {
     JPEG("image/jpeg", "jpeg"),
     PNG("image/png", "png"),
+    HEIC("image/heic", "heic"),
     ;
 
     private final String value;
