@@ -25,6 +25,7 @@ public class Image extends BaseEntity {
     private String imageKey;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 10)
     private ContentType contentType;
 
     @Builder(access = AccessLevel.PRIVATE)
