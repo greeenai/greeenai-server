@@ -1,8 +1,8 @@
 package com.greeenai.greeenai.domain.auth.controller;
 
 import com.greeenai.greeenai.domain.auth.dto.LoginResponse;
-import com.greeenai.greeenai.domain.auth.service.AuthService;
 import com.greeenai.greeenai.domain.auth.dto.request.LoginRequest;
+import com.greeenai.greeenai.domain.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
